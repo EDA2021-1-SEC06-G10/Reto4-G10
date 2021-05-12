@@ -74,6 +74,21 @@ def addCountry(catalog, country):
     paises= catalog['countries']
     name= country['country_name']
     mp.put(paises,name, country)
+
+def addVertexes(catalog, info, origin, destination):
+    try:
+        grafo= catalog['connections']
+        existe_origin= gr.containsVertex(grafo, origin)
+        existe_destino= gr.containsVertex(grafo, destination)
+        if not existe_origin:
+            gr.insertVertex(grafo, origin)
+        if not existe_destino:
+            gr.insertVertex(grafo, destination)
+        return catalog
+    except Exception as exp:
+        error.reraise(exp, 'model:addVertexes')
+
+
 # Funciones para creacion de datos
 
 # Funciones de consulta

@@ -53,7 +53,10 @@ def loadEdges(catalog):
 def loadVertexes(catalog):
     contentfile = cf.data_dir + 'landing_points.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
-    pass
+    for lp in input_file:
+        origen= lp['origin']
+        llegada= lp['destination']
+        model.addVertexes(catalog, info, origen, llegada)
 # Funciones para la carga de datos
 
 # Funciones de ordenamiento
