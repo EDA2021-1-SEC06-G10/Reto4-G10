@@ -28,8 +28,10 @@
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import graph as gr
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+
 assert cf
 
 """
@@ -38,13 +40,52 @@ los mismos.
 """
 
 # Construccion de modelos
+def initialize():
+    """ Inicializa el analizador
+
+   stops: Tabla de hash para guardar los vertices del grafo
+   connections: Grafo para representar las rutas entre estaciones
+   components: Almacena la informacion de los componentes conectados
+   paths: Estructura que almancena los caminos de costo minimo desde un
+           vertice determinado a todos los otros vértices del grafo
+    """
+    try:
+        analyzer = {
+                    'stops': None,
+                    'connections': None,
+                    'components': None,
+                    'paths': None
+                    }
+
+        analyzer['countries'] = mp.newMap(numelements=220,
+                                     maptype='PROBING',
+                                     comparefunction=compareCountries)
+
+        analyzer['connections'] = gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=False,
+                                              size=6000,
+                                              comparefunction=compareStopIds)
+        return analyzer
+    except Exception as exp:
+        error.reraise(exp, 'model:newAnalyzer')
 
 # Funciones para agregar informacion al catalogo
-
+def addCountry(catalog, country):
+    paises= catalog['countries']
+    name= country['country_name']
+    mp.put(paises,name, country)
 # Funciones para creacion de datos
 
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+def compareCountries(country, countryname):
+    Cntry= countryname['country_name']
+    if country== Cntry:
+        return 0
+    elif country>Cntry:
+        return 1
+    else:
+        return -1
 
 # Funciones de ordenamiento
