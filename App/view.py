@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import graph as gr
 assert cf
 
 
@@ -51,6 +52,8 @@ while True:
         print("Cargando información de los archivos ....")
         analyzer=controller.initialize()
         controller.loadData(analyzer)
+        vertices= gr.numVertices(analyzer['connections'])
+        print(vertices)
     elif int(inputs[0]) == 2:
         pass
 

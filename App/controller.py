@@ -31,13 +31,15 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 # Inicialización del Catálogo de libros
 def initialize():
-    analyzer=model.newAnalyzer
+    analyzer=model.initialize()
     return analyzer
 
 def loadData(catalog):
+    loadVertexescomp(catalog)
     loadCountries(catalog)
-    loadEdges(catalog)
-    loadVertexes(catalog)
+    #loadlp(catalog)
+    
+    
 
 def loadCountries(catalog):
     contentfile = cf.data_dir + 'countries.csv'
@@ -45,18 +47,24 @@ def loadCountries(catalog):
     for country in input_file:
         model.addCountry(catalog, country)
 
-def loadEdges(catalog):
+def loadVertexescomp(catalog):
     contentfile = cf.data_dir + 'connections.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
-    pass
+    for cable in input_file:
+        cable['origin']=cable['\ufefforigin']
+        cable['destination']= cable['destination']
+        new_len=model.length(cable['cable_length'])
+        cable["cable_length"]=int(float(new_len))
+        model.addVertexescomp(catalog, cable)
+    
 
-def loadVertexes(catalog):
+def loadlp(catalog):
     contentfile = cf.data_dir + 'landing_points.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for lp in input_file:
-        origen= lp['origin']
-        llegada= lp['destination']
-        model.addVertexes(catalog, info, origen, llegada)
+        nodo = int(lp['\ufefflanding_point_id'])
+        model.addlp(catalog, lp, nodo)
+
 # Funciones para la carga de datos
 
 # Funciones de ordenamiento
