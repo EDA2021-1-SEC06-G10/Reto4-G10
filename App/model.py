@@ -94,6 +94,21 @@ def addlp(catalog, info, nodo):
     lp_data= catalog['info_lp']
     mp.put(lp_data, nodo, info)
 
+def samelp(grafo):
+    list_vert= gr.vertices(grafo)
+    i=0
+    tamano= lt.size(list_vert)
+    while i< tamano:
+        elemento= lt.getElement(list_vert,i)
+        corte=elemento.split('-')
+        lp=corte[0]
+        j=0
+        while j<tamano:
+            elemento2=lt.getElement(list_vert,j)
+            if elemento2!= elemento and (lp in elemento2):
+                addEdges(grafo, elemento, elemento2,.100)
+            j+=1
+        i+=1
 
 def addVertexescomp(catalog, link):
     try:

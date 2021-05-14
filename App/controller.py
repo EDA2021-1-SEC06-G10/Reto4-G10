@@ -37,9 +37,12 @@ def initialize():
 def loadData(catalog):
     loadVertexescomp(catalog)
     loadCountries(catalog)
-    #loadlp(catalog)
+    loadlp(catalog)
+    loadnewEdges(catalog)
     
-    
+def loadnewEdges(catalog):
+    grafo=catalog['connections']
+    model.samelp(grafo)
 
 def loadCountries(catalog):
     contentfile = cf.data_dir + 'countries.csv'
@@ -54,7 +57,7 @@ def loadVertexescomp(catalog):
         cable['origin']=cable['\ufefforigin']
         cable['destination']= cable['destination']
         new_len=model.length(cable['cable_length'])
-        cable["cable_length"]=int(float(new_len))
+        cable["cable_length"]=float(new_len)
         model.addVertexescomp(catalog, cable)
     
 
@@ -62,7 +65,7 @@ def loadlp(catalog):
     contentfile = cf.data_dir + 'landing_points.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for lp in input_file:
-        nodo = int(lp['\ufefflanding_point_id'])
+        nodo = lp['\ufefflanding_point_id']
         model.addlp(catalog, lp, nodo)
 
 # Funciones para la carga de datos
