@@ -125,7 +125,7 @@ def addVertexescomp(catalog, link):
             gr.insertVertex(grafo, origin)
         if exists_destin== False:
             gr.insertVertex(grafo, destination)
-        addEdge(grafo, origin, destination,weight)
+        addEdges(grafo, origin, destination,weight)
         return catalog
         
     except Exception as exp:
