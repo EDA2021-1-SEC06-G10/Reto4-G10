@@ -53,7 +53,9 @@ while True:
         analyzer=controller.initialize()
         controller.loadData(analyzer)
         vertices= gr.numVertices(analyzer['connections'])
-        print(vertices)
+        aristas= gr.numEdges(analyzer['connections'])
+        print(vertices, aristas)
+        print(analyzer['info_lp'])
     elif int(inputs[0]) == 2:
         pass
 

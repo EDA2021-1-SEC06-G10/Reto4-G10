@@ -25,6 +25,7 @@
  """
 
 
+from math import dist
 from DISClib.DataStructures.adjlist import addEdge
 import config as cf
 from DISClib.ADT import list as lt
@@ -33,6 +34,7 @@ from DISClib.ADT import graph as gr
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Utils import error as error
+import haversine as hs
 assert cf
 
 """
@@ -56,11 +58,13 @@ def initialize():
                     'connections': None,
                     'components': None,
                     'paths': None,
-                    'info_LP': None,
-                    'info_cables': None
+                    'info_lp': None,
+                    'info_cables': None,
+                    'nodos_capitales': None,
+                    "check":None
                     }
 
-        analyzer['countries'] = mp.newMap(numelements=220,
+        analyzer['countries'] = mp.newMap(numelements=250,
                                      maptype='PROBING',
                                      comparefunction=compareCountry)
         analyzer['info_cables']= mp.newMap(numelements=6000,
@@ -73,22 +77,32 @@ def initialize():
                                               directed=False,
                                               size=6000,
                                               comparefunction=compareLPids)
+        analyzer['nodos_capitales']= lt.newList("ARRAY_LIST")
         return analyzer
     except Exception as exp:
         error.reraise(exp, 'model.newAnalyzer')
 
 # Funciones para agregar informacion al catalogo
 def addCountry(catalog, country):
-    grafo=catalog['connections']
+    lista= catalog['nodos_capitales']
+    grafo= catalog['connections']
     paises= catalog['countries']
-    name= country['\ufeffcountry_name'].lower()
-    mp.put(paises,name, country)
-    vert_cap= country['capital_name']
-    if vert_cap=="N/A":
-        vert_cap=country['\ufeffcountry_name'].lower()
-    existscap= gr.containsVertex(grafo, vert_cap)
-    if existscap==False:
-        gr.insertVertex(grafo,vert_cap)
+    name= country['CountryName'].lower()
+    if name != "":
+        entry=newCountry(country)
+        mp.put(paises,name, entry)
+        vert_cap= country['CapitalName'].lower()+'-'+name
+        existscap= gr.containsVertex(grafo, vert_cap)
+        if existscap==False:
+            gr.insertVertex(grafo,vert_cap)
+            lt.addLast(lista,vert_cap)
+
+def newCountry(country):
+    retorno={}
+    retorno['infopais']=country
+    retorno['nodos_asoc']=lt.newList()
+    return retorno
+
 
 def addlp(catalog, info, nodo):
     lp_data= catalog['info_lp']
@@ -103,6 +117,7 @@ def samelp(grafo):
         corte=elemento.split('-')
         lp=corte[0]
         j=0
+        k=0
         while j<tamano:
             elemento2=lt.getElement(list_vert,j)
             if elemento2!= elemento and (lp in elemento2):
@@ -123,18 +138,47 @@ def addVertexescomp(catalog, link):
         addcableInfo(link,catalog)
         if exists_origin==False:
             gr.insertVertex(grafo, origin)
+            pais=findLPtoCountry(catalog,origin)
+            addLPtoCountry(pais, origin, catalog)
         if exists_destin== False:
             gr.insertVertex(grafo, destination)
-        addEdge(grafo, origin, destination,weight)
+            pais=findLPtoCountry(catalog,destination)
+            addLPtoCountry(pais, destination, catalog)
+        addEdges(grafo, origin, destination,weight)
         return catalog
         
     except Exception as exp:
-        error.reraise(exp, 'model:addEdges')
+        error.reraise(exp, 'model:addVertexescomp')
 
 def addEdges(grafo, origin, destination, weight):
     edge= gr.getEdge(grafo, origin, destination)
     if edge is None:
         gr.addEdge(grafo, origin, destination, weight)
+
+def findLPtoCountry(catalog,origin):
+    lps= catalog['info_lp']
+    pre= origin.split("-")
+    lpO=pre[0]
+    entry=mp.get(lps,lpO)
+    if entry!= None:
+        InfoLp= me.getValue(entry)
+        pre2=InfoLp['name'].split()
+        pais_lp= pre2[(len(pre2)-1)]
+    return pais_lp.lower()
+
+def addLPtoCountry(pais, origin, catalog):
+    paises=catalog['countries']
+    entry=mp.get(paises, pais)
+    if entry != None:
+        minidic=me.getValue(entry)
+        lista=minidic['nodos_asoc']
+        lt.addLast(lista, origin)
+
+def check(mapa, grafo):
+    var=gr.containsVertex(grafo, "5808-colombian-festoon")
+    value=mp.get(mapa,'colombia')
+    print(var)
+    return(value)    
 
 def addcableInfo(link, catalog):
     nombre= link['cable_id']
@@ -142,6 +186,70 @@ def addcableInfo(link, catalog):
     existe_cable=mp.contains(info_cables, nombre)
     if existe_cable==False:
         mp.put(info_cables,nombre,link)
+
+def connectCLP(catalog):
+    i=0
+    mapalp=catalog['info_lp']
+    grafo=catalog['connections']
+    listaCLP= catalog['nodos_capitales']
+    tamano = lt.size(listaCLP)
+    mapa_paises= catalog['countries']
+    while i <tamano:
+        nodo_capital= lt.getElement(listaCLP,0)
+        pre=nodo_capital.split("-")
+        pais= pre[1:]
+        entry_pais= mp.get(mapa_paises, pais)
+        minidic=me.getValue(entry_pais)
+        loc_cap= ubicar_capital(minidic)
+        lista=minidic['nodos_asoc']
+        lta_vacia=lt.isEmpty(lista)
+        if lta_vacia== False:
+            j=0
+            tamano2=lt.size(lista)
+            while j<tamano2:
+                nodo_pais=lt.getElement(lista,j)
+                pre2= nodo_pais.split("-")
+                lp= pre2[0]
+                loc2= ubicarLp(lp, mapalp)
+                dist=hs.haversine(loc_cap, loc2)
+                addEdges(grafo,nodo_capital,nodo_pais, dist)
+                j+=1
+        else:
+            pass
+            #lista_vertices= gr.vertices(grafo)
+            #nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
+            #addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
+        i+=1
+
+def ubicar_capital(minidic):
+    info_pais=minidic['infopais']
+    latitud=float(info_pais['CapitalLatitude'])
+    longitud=float(info_pais['CapitalLongitude'])
+    return (latitud, longitud)
+
+def ubicarLp(lp,mapalp):
+    entrylp=mp.get(mapalp,lp)
+    diccionario=me.getValue(entrylp)
+    latitud=float(diccionario['latitude'])
+    longitud= float(diccionario['longitude'])
+    return (latitud,longitud)
+    
+def findNearest(lista_vertices, loc1, mapalp):
+    menor=1000000000000.0000
+    i=0
+    tamano= lt.size(lista_vertices)
+    retorno=None
+    while i < tamano:
+        elemento= lt.getElement(lista_vertices,i)
+        pre= elemento.split('-')
+        lp=pre[0]
+        loc2=ubicarLp(lp,mapalp)
+        dist=hs.haversine(loc1, loc2)
+        if dist< menor:
+            menor= dist
+            retorno=elemento
+    return retorno, menor
+    
 
 # Funciones para creacion de datos
 def formatVertex(cable,lp):    
