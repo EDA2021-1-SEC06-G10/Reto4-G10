@@ -35,11 +35,13 @@ def initialize():
     return analyzer
 
 def loadData(catalog):
-    loadVertexescomp(catalog)
-    loadCountries(catalog)
     loadlp(catalog)
-    loadnewEdges(catalog)
+    loadCountries(catalog)
+    loadVertexescomp(catalog)
+    #loadnewEdges(catalog)
     
+
+
 def loadnewEdges(catalog):
     grafo=catalog['connections']
     model.samelp(grafo)
@@ -65,9 +67,12 @@ def loadlp(catalog):
     contentfile = cf.data_dir + 'landing_points.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for lp in input_file:
-        nodo = lp['\ufefflanding_point_id']
+        nodo = lp['landing_point_id']
         model.addlp(catalog, lp, nodo)
 
+def connectCLP(catalog):
+    model.connectCLP(catalog)
+    
 # Funciones para la carga de datos
 
 # Funciones de ordenamiento
