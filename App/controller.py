@@ -38,8 +38,8 @@ def loadData(catalog):
     loadlp(catalog)
     loadCountries(catalog)
     loadVertexescomp(catalog)
-    #loadnewEdges(catalog)
-    
+    loadnewEdges(catalog)
+    connectCLP(catalog)
 
 
 def loadnewEdges(catalog):

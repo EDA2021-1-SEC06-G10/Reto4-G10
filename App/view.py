@@ -55,7 +55,6 @@ while True:
         vertices= gr.numVertices(analyzer['connections'])
         aristas= gr.numEdges(analyzer['connections'])
         print(vertices, aristas)
-        print(analyzer['info_lp'])
     elif int(inputs[0]) == 2:
         pass
 

@@ -91,7 +91,7 @@ def addCountry(catalog, country):
     if name != "":
         entry=newCountry(country)
         mp.put(paises,name, entry)
-        vert_cap= country['CapitalName'].lower()+'-'+name
+        vert_cap= country['CapitalName'].lower()+'*'+name
         existscap= gr.containsVertex(grafo, vert_cap)
         if existscap==False:
             gr.insertVertex(grafo,vert_cap)
@@ -195,10 +195,12 @@ def connectCLP(catalog):
     tamano = lt.size(listaCLP)
     mapa_paises= catalog['countries']
     while i <tamano:
-        nodo_capital= lt.getElement(listaCLP,0)
-        pre=nodo_capital.split("-")
-        pais= pre[1:]
+        nodo_capital= lt.getElement(listaCLP,i)
+        pre=nodo_capital.split("*")
+        pais= pre[(len(pre)-1)]
         entry_pais= mp.get(mapa_paises, pais)
+        if entry_pais== None:
+            print(pais)
         minidic=me.getValue(entry_pais)
         loc_cap= ubicar_capital(minidic)
         lista=minidic['nodos_asoc']
@@ -215,10 +217,9 @@ def connectCLP(catalog):
                 addEdges(grafo,nodo_capital,nodo_pais, dist)
                 j+=1
         else:
-            pass
-            #lista_vertices= gr.vertices(grafo)
-            #nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
-            #addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
+            lista_vertices= gr.vertices(grafo)
+            nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
+            addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
         i+=1
 
 def ubicar_capital(minidic):
@@ -228,10 +229,13 @@ def ubicar_capital(minidic):
     return (latitud, longitud)
 
 def ubicarLp(lp,mapalp):
+    latitud= None
+    longitud= None
     entrylp=mp.get(mapalp,lp)
-    diccionario=me.getValue(entrylp)
-    latitud=float(diccionario['latitude'])
-    longitud= float(diccionario['longitude'])
+    if entrylp != None:
+        diccionario=me.getValue(entrylp)
+        latitud=float(diccionario['latitude'])
+        longitud= float(diccionario['longitude'])
     return (latitud,longitud)
     
 def findNearest(lista_vertices, loc1, mapalp):
@@ -240,14 +244,17 @@ def findNearest(lista_vertices, loc1, mapalp):
     tamano= lt.size(lista_vertices)
     retorno=None
     while i < tamano:
+        dist=-1
         elemento= lt.getElement(lista_vertices,i)
         pre= elemento.split('-')
         lp=pre[0]
         loc2=ubicarLp(lp,mapalp)
-        dist=hs.haversine(loc1, loc2)
+        if loc2!= (None,None):
+            dist=hs.haversine(loc1, loc2)
         if dist< menor:
             menor= dist
             retorno=elemento
+        i+=1
     return retorno, menor
     
 
