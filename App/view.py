@@ -38,7 +38,12 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Identificar los clústeres de comunicación")
+    print("3- Identificar los puntos de conexión críticos de la red")
+    print("4- Identificar la ruta de menor distancia")
+    print("5- Identificar la Infraestructura crítica de la red")
+    print("6- Análisis de fallas")
+    print("0- Salir")
 
 catalog = None
 
@@ -55,7 +60,20 @@ while True:
         vertices= gr.numVertices(analyzer['connections'])
         aristas= gr.numEdges(analyzer['connections'])
         print(vertices, aristas)
+
     elif int(inputs[0]) == 2:
+        pass
+
+    elif int(inputs[0]) == 3:
+        pass
+
+    elif int(inputs[0]) == 4:
+        pass
+
+    elif int(inputs[0]) == 5:
+        pass
+
+    elif int(inputs[0]) == 6:
         pass
 
     else:
