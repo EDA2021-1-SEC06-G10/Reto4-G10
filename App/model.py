@@ -44,13 +44,12 @@ los mismos.
 
 # Construccion de modelos
 def initialize():
-    """ Inicializa el analizador
-
-   stops: Tabla de hash para guardar los vertices del grafo
-   connections: Grafo para representar las rutas entre estaciones
-   components: Almacena la informacion de los componentes conectados
-   paths: Estructura que almancena los caminos de costo minimo desde un
-           vertice determinado a todos los otros vértices del grafo
+    """ Inicializa el analizador:
+            stops: Tabla de hash para guardar los vertices del grafo.
+            connections: Grafo para representar las rutas entre estaciones.
+            components: Almacena la informacion de los componentes conectados.
+            paths: Estructura que almacena los caminos de costo minimo desde un
+                   vértice determinado a todos los otros vértices del grafo.
     """
     try:
         analyzer = {
@@ -82,7 +81,10 @@ def initialize():
     except Exception as exp:
         error.reraise(exp, 'model.newAnalyzer')
 
-# Funciones para agregar informacion al catalogo
+# ===============================================
+# Funciones para agregar información al catalogo
+# ===============================================
+
 def addCountry(catalog, country):
     lista= catalog['nodos_capitales']
     grafo= catalog['connections']
@@ -103,10 +105,21 @@ def newCountry(country):
     retorno['nodos_asoc']=lt.newList()
     return retorno
 
+def newLP(lp):
+    retorno={}
+    retorno["lp"]=lp
+    retorno['LPsC']=mp.newMap(numelements=75,
+                                     maptype='PROBING',
+                                     comparefunction=compareCountry)
+    retorno['cables']=mp.newMap(numelements=75,
+                                     maptype='PROBING',
+                                     comparefunction=compareCountry)
+    return retorno
 
 def addlp(catalog, info, nodo):
     lp_data= catalog['info_lp']
-    mp.put(lp_data, nodo, info)
+    elLp=newLP(info)
+    mp.put(lp_data, nodo, elLp)
 
 def samelp(grafo):
     list_vert= gr.vertices(grafo)
@@ -136,14 +149,20 @@ def addVertexescomp(catalog, link):
         exists_origin=gr.containsVertex(grafo,origin)
         exists_destin= gr.containsVertex(grafo, destination)
         addcableInfo(link,catalog)
+        addConnectingLP(origin, destination, catalog)
+        addConnectingLP(destination, origin, catalog)
+        addCabletoLp(destination, catalog)
+        addCabletoLp(origin, catalog)
         if exists_origin==False:
             gr.insertVertex(grafo, origin)
             pais=findLPtoCountry(catalog,origin)
             addLPtoCountry(pais, origin, catalog)
+            
         if exists_destin== False:
             gr.insertVertex(grafo, destination)
             pais=findLPtoCountry(catalog,destination)
             addLPtoCountry(pais, destination, catalog)
+            
         addEdges(grafo, origin, destination,weight)
         return catalog
         
@@ -161,10 +180,35 @@ def findLPtoCountry(catalog,origin):
     lpO=pre[0]
     entry=mp.get(lps,lpO)
     if entry!= None:
-        InfoLp= me.getValue(entry)
+        minidic= me.getValue(entry)
+        InfoLp= minidic["lp"]
         pre2=InfoLp['name'].split()
         pais_lp= pre2[(len(pre2)-1)]
     return pais_lp.lower()
+
+def addConnectingLP(lp1, lp2, catalog):
+    landing_points=catalog['info_lp']
+    pre= lp1.split("-")
+    lpO= pre[0]
+    pre2= lp2.split('-')
+    lpD=pre2[0]
+    entry=mp.get(landing_points,lpO)
+    if entry!= None:
+        minidic= me.getValue(entry)
+        InfoLp= minidic["LPsC"]
+        mp.put(InfoLp, lpD, None)
+
+def addCabletoLp(lp,catalog):
+    landing_points=catalog['info_lp']
+    pre= lp.split("-")
+    lpO= pre[0]
+    lista= pre[1:]
+    cable= '-'.join(lista)
+    entry=mp.get(landing_points,lpO)
+    if entry!= None:
+        minidic= me.getValue(entry)
+        InfoLp= minidic["cables"]
+        mp.put(InfoLp, cable, None)
 
 def addLPtoCountry(pais, origin, catalog):
     paises=catalog['countries']
@@ -257,15 +301,23 @@ def findNearest(lista_vertices, loc1, mapalp):
         i+=1
     return retorno, menor
     
-
+# =================================
 # Funciones para creacion de datos
+# =================================
+
 def formatVertex(cable,lp):    
     nombre_cable= cable['cable_id']
     nombre_nodo= lp + '-' + nombre_cable
     return nombre_nodo
-# Funciones de consulta
 
+# ======================
+# Funciones de consulta
+# ======================
+
+# ================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
+# =================================================================
+
 def compareCountry(Id, entry):
     identry= me.getKey(entry)
     if Id == identry:
@@ -284,7 +336,10 @@ def compareLPids(lp, lp2):
     else:
         return-1
 
+# ===================
 # Funcion de formato
+# ===================
+
 def length(string):
     if string=="n.a.":
         string=0
