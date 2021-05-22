@@ -35,6 +35,11 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Utils import error as error
 import haversine as hs
+import DISClib.Algorithms.Graphs.dfs as dfs
+import DISClib.Algorithms.Graphs.dijsktra as dij
+import DISClib.Algorithms.Graphs.prim as prim
+import DISClib.Algorithms.Graphs.scc as kos
+import DISClib.Algorithms.Graphs.dfo as dfo
 assert cf
 
 """
