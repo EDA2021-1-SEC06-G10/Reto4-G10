@@ -319,6 +319,61 @@ def formatVertex(cable,lp):
 # Funciones de consulta
 # ======================
 
+# ================
+# Requerimiento 1
+# ================
+
+# La idea es pedirle al usuario que digite dos landing points. Luego,
+# usar Kosaraju para encontrar/calcular los componentes conectados.
+# Ahora, se puede usar sccCount() para saber cuántos componentes conectados
+# hay. Esto es una parte. Para la otra, se tiene que usar stronglyConnected()
+# para saber si los dos componentes ingresados están conectados (es decir, en
+# el mismo clúster).
+
+# ================
+# Requerimiento 2
+# ================
+
+# ================
+# Requerimiento 3
+# ================
+
+# La idea es pedirle al usuario 2 paises. Luego, se tiene que ver cuál es la
+# capital de cada pais. Con las dos capitales se puede usar Dijkstra para
+# encontrar el camino más corto entre los dos. Con el camino más corto, se
+# usa distTo() para saber el costo desde el vértice capital1 hasta el vértice
+# capital2. También, este requerimiento debería devolver el costo para cada
+# par consecutivo de landing points. Toca pensarlo.
+
+# ================
+# Requerimiento 4
+# ================
+
+# La idea es usar Prim para encontrar el árbol de expansión mínima. Con el árbol
+# ya calculado, se necesita usar numVertices() para encontrar el número de nodos
+# que son parte del árbol. Para saber el costo total del árbol se puede usar
+# weightMST(). La conexión más larga y la conexión más corta se podrían calcular
+# usando la función edges() para tener una lista con todos los arcos. Esta lista
+# se puede recorrer, viendo el peso de cada arco y viendo cual es menor y cual
+# es mayor y así hasta sacar el mayor y el menor.
+
+# ================
+# Requerimiento 5
+# ================
+
+# La idea es que el usuario ingrese un landing point. Entonces, se tiene que ver
+# ese landing point a qué pais pertenece y guardar ese pais. Se hace un DFS para
+# saber a cuales otros landing points tiene camino el ingresado. Se puede usar
+# ver vertices() para tener la lista de los vértices a los que puede llegar. Esta
+# lista se recorre y se mira cada landing point a qué pais pertenece. Cada pais
+# se va guardando en una Tabla de Hash (para asegurarnos que no hay paises repetidos).
+# como la Tabla de Hash va a ser: {'llave': nombre_pais, 'valor': None} (eso no es literal
+# una Tabla de Hash, es para que se entienda más fácil), hay que pedirle el el KeySet() y
+# el size del KeySet(). Este size es el número de paises afectados. La lista de paises
+# sería el KeySet() (o para mejor orden se puede recorrer ese KeySet y pasarlo a otra lista,
+# pero no creo que valga la pena). Esta lista debería estar en orden de [km] decreciente, pero
+# eso es un detalle para después.
+
 # ================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
 # =================================================================
