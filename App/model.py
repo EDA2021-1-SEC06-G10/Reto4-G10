@@ -31,15 +31,15 @@ import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import graph as gr
+import DISClib.Algorithms.Graphs.dfs as dfs
+import DISClib.Algorithms.Graphs.dijsktra as dij
+import DISClib.Algorithms.Graphs.prim as prim
+import DISClib.Algorithms.Graphs.scc as scc
+import DISClib.Algorithms.Graphs.dfo as dfo
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Utils import error as error
 import haversine as hs
-import DISClib.Algorithms.Graphs.dfs as dfs
-import DISClib.Algorithms.Graphs.dijsktra as dij
-import DISClib.Algorithms.Graphs.prim as prim
-import DISClib.Algorithms.Graphs.scc as kos
-import DISClib.Algorithms.Graphs.dfo as dfo
 assert cf
 
 """
@@ -283,8 +283,9 @@ def ubicarLp(lp,mapalp):
     entrylp=mp.get(mapalp,lp)
     if entrylp != None:
         diccionario=me.getValue(entrylp)
-        latitud=float(diccionario['latitude'])
-        longitud= float(diccionario['longitude'])
+        info_lp = diccionario['lp']
+        latitud=float(info_lp['latitude'])
+        longitud= float(info_lp['longitude'])
     return (latitud,longitud)
     
 def findNearest(lista_vertices, loc1, mapalp):
@@ -330,6 +331,75 @@ def formatVertex(cable,lp):
 # para saber si los dos componentes ingresados están conectados (es decir, en
 # el mismo clúster).
 
+def componentesConectados(analyzer):
+    """ 
+    Encuentra los componentes conectados usando el algoritmo de
+    Kosaraju, lo guarda en el analyzer y mira el número de
+    componentes conectados que tiene.
+
+    Parámetros:
+        analyzer: el analyzer donde está guardado todo.
+
+    Retorna:
+        un entero, que es el número de componentes conectados.
+    """
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    componentes = scc.connectedComponents(analyzer['components'])
+    return componentes
+
+def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    mapa = analyzer['components']['idscc']
+
+    lista_llaves = mp.keySet(mapa)
+    size = lt.size(lista_llaves)
+
+    i = 1
+    centinelaA = False
+    while i < size or centinelaA == False:
+        cada_elemento = lt.getElement(lista_llaves, i)
+        lp = cada_elemento.split('-')[0]
+        if lp == landing_point1:
+            centinelaA = True
+            lpA = cada_elemento
+        i += 1
+    
+    j = 1
+    centinelaB = False
+    while j < size or centinelaB == False:
+        cada_elemento = lt.getElement(lista_llaves, j)
+        lp = cada_elemento.split('-')[0]
+        if lp == landing_point2:
+            centinelaB = True
+            lpB = cada_elemento
+        j += 1
+    
+    return (lpA, lpB)
+        
+def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
+    """
+    Calcula si un landing point A está en el mismo clúster que
+    un landing point B.
+
+    Parámetros:
+        analyzer: es el analyzer donde está todo guardado.
+        landing_point1: el landing point A ingresado por el usuario.
+        landing_point2: el landing point B ingresado por el usuario.
+
+    Retorna:
+        un booleano, donde True significa que ambos landing points
+        están en el mismo clúster. False significa que ambos landing
+        points no están en el mismo clúster.
+    """
+    landing_points = compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
+    lpA = landing_points[0]
+    lpB = landing_points[1]
+
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    esta = scc.stronglyConnected(analyzer['components'], lpA, lpB)
+
+    return esta
+
 # ================
 # Requerimiento 2
 # ================
@@ -344,6 +414,13 @@ def formatVertex(cable,lp):
 # usa distTo() para saber el costo desde el vértice capital1 hasta el vértice
 # capital2. También, este requerimiento debería devolver el costo para cada
 # par consecutivo de landing points. Toca pensarlo.
+
+def encontrarCapitalDePais(analyzer, pais):
+    mapa_paises = analyzer['countries']
+    pareja = mp.get(mapa_paises, pais)
+    valor = me.getValue(pareja)
+    print(valor)
+
 
 # ================
 # Requerimiento 4

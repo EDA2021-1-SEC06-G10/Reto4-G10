@@ -29,7 +29,10 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+# ======================================
+# Inicialización del Catálogo de cables
+# ======================================
+
 def initialize():
     analyzer=model.initialize()
     return analyzer
@@ -41,6 +44,9 @@ def loadData(catalog):
     loadnewEdges(catalog)
     connectCLP(catalog)
 
+# =================================    
+# Funciones para la carga de datos
+# =================================
 
 def loadnewEdges(catalog):
     grafo=catalog['connections']
@@ -72,9 +78,27 @@ def loadlp(catalog):
 
 def connectCLP(catalog):
     model.connectCLP(catalog)
-    
-# Funciones para la carga de datos
 
+# ==========================
 # Funciones de ordenamiento
+# ==========================
 
+# ========================================
 # Funciones de consulta sobre el catalogo
+# ========================================
+
+def componentesConectados(analyzer):
+    return model.componentesConectados(analyzer)
+
+def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
+    return model.compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
+
+def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
+    return model.estanLosDosLandingPoints(analyzer, landing_point1, landing_point2)
+
+def encontrarCapitalDePais(analyzer, pais):
+    return model.encontrarCapitalDePais(analyzer, pais)
+
+# ============================================
+# Funciones para consulta de tiempo y memoria
+# ============================================

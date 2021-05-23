@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from math import pi
 import config as cf
 import sys
 import controller
@@ -35,10 +36,6 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
-# ==================
-# Prints en general
-# ==================
-
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
@@ -48,6 +45,18 @@ def printMenu():
     print("5- Identificar la Infraestructura crítica de la red")
     print("6- Análisis de fallas")
     print("0- Salir")
+
+# ==========================================
+# Sección de prints para cada requerimiento
+# ==========================================
+
+def print_Req1(landing_point1, landing_point2, booleano):
+    print('*' * 25)
+    if booleano == True:
+        print('Por otro lado, ' + str(landing_point1) + ' y ' + str(landing_point2) + ' están en el mismo clúster.')
+    else:
+        print('Por otro lado, ' + str(landing_point1) + ' y ' + str(landing_point2) + ' no están en el mismo clúster.')
+    print('*' * 25)
 
 catalog = None
 
@@ -63,13 +72,23 @@ while True:
         controller.loadData(analyzer)
         vertices= gr.numVertices(analyzer['connections'])
         aristas= gr.numEdges(analyzer['connections'])
-        print(vertices, aristas)
+        #print(vertices, aristas)
 
     elif int(inputs[0]) == 2:
-        pass
+        # 5950 y 3210 están en el mismo clúster.
+        # 5950 y 5774 no están en el mismo clúster.
+        landing_point1 = '5950' #input('Ingrese el landing point A: ')
+        landing_point2 = '3210' #input('Ingrese el landing point B: ')
+        componentes = controller.componentesConectados(analyzer)
+        estan = controller.estanLosDosLandingPoints(analyzer, landing_point1, landing_point2)
+        print('*' * 25)
+        print('El número de clústers es: ' + str(componentes))
+        print_Req1(landing_point1, landing_point2, estan)
 
     elif int(inputs[0]) == 3:
-        pass
+        pais = 'albania'
+        controller.encontrarCapitalDePais(analyzer, pais)
+        #print(capital)
 
     elif int(inputs[0]) == 4:
         pass
