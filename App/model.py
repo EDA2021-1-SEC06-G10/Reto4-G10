@@ -223,12 +223,6 @@ def addLPtoCountry(pais, origin, catalog):
         lista=minidic['nodos_asoc']
         lt.addLast(lista, origin)
 
-def check(mapa, grafo):
-    var=gr.containsVertex(grafo, "5808-colombian-festoon")
-    value=mp.get(mapa,'colombia')
-    print(var)
-    return(value)    
-
 def addcableInfo(link, catalog):
     nombre= link['cable_id']
     info_cables= catalog['info_cables']
@@ -268,6 +262,7 @@ def connectCLP(catalog):
         else:
             lista_vertices= gr.vertices(grafo)
             nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
+            print(nodocercano[0],nodocercano[1])
             addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
         i+=1
 
