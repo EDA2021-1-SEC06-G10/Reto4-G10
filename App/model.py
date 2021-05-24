@@ -262,8 +262,8 @@ def connectCLP(catalog):
         else:
             lista_vertices= gr.vertices(grafo)
             nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
-            print(nodocercano[0],nodocercano[1])
-            addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
+            if nodocercano[1]!= None:
+                addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
         i+=1
 
 def ubicar_capital(minidic):
