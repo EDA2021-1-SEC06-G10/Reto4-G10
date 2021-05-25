@@ -21,11 +21,13 @@
  """
 
 from math import pi
+from typing import runtime_checkable
 import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import graph as gr
+from DISClib.ADT import stack as stk
 assert cf
 
 
@@ -40,10 +42,11 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Identificar los clústeres de comunicación")
-    print("3- Identificar los puntos de conexión críticos de la red")
-    print("4- Identificar la ruta de menor distancia")
-    print("5- Identificar la Infraestructura crítica de la red")
-    print("6- Análisis de fallas")
+    print("3- Establecer estación base")
+    print("4- Identificar los puntos de conexión críticos de la red")
+    print("5- Identificar la ruta de menor distancia")
+    print("6- Identificar la Infraestructura crítica de la red")
+    print("7- Análisis de fallas")
     print("0- Salir")
 
 # ==========================================
@@ -57,6 +60,16 @@ def print_Req1(landing_point1, landing_point2, booleano):
     else:
         print('Por otro lado, ' + str(landing_point1) + ' y ' + str(landing_point2) + ' no están en el mismo clúster.')
     print('*' * 25)
+
+def print_Req3(camino):
+    if camino is not None:
+        distCamino = stk.size(camino)
+        print('El camino es de longitud: ' + str(distCamino) + '.')
+        while (not stk.isEmpty(camino)):
+            cada_vertice = stk.pop(camino)
+            print(cada_vertice)
+    else:
+        print('No hay camino.')
 
 catalog = None
 
@@ -86,17 +99,29 @@ while True:
         print_Req1(landing_point1, landing_point2, estan)
 
     elif int(inputs[0]) == 3:
-        pais = 'albania'
-        controller.encontrarCapitalDePais(analyzer, pais)
-        #print(capital)
+        pais_ini = 'uruguay' #input('Ingrese el pais de origen: ')
+        controller.caminosMenorCosto(analyzer, pais_ini)
+        formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
+        print(formato)
 
     elif int(inputs[0]) == 4:
-        pass
+        pais_fini = 'argentina' #input('Ingrese el pais destino: ')
+        camino = controller.caminoMenorCosto(analyzer, pais_fini)
+        formato = controller.encontrarCapitalDePais(analyzer, pais_fini)
+        print(formato)
+        #print_Req3(camino)
 
     elif int(inputs[0]) == 5:
-        pass
+        mst = controller.arbolExpansionMinima(analyzer)
+        #distCorta = controller.conexionMasCortaMST(analyzer)
+        #distLarga = controller.conexionMasLargaMST(analyzer)
+        #print(distCorta)
+        print(mst)
 
     elif int(inputs[0]) == 6:
+        pass
+
+    elif int(inputs[0]) == 7:
         pass
 
     else:

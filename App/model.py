@@ -26,13 +26,15 @@
 
 
 from math import dist
+from sys import path
 from DISClib.DataStructures.adjlist import addEdge
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import graph as gr
+from DISClib.DataStructures import edge as edge
 import DISClib.Algorithms.Graphs.dfs as dfs
-import DISClib.Algorithms.Graphs.dijsktra as dij
+import DISClib.Algorithms.Graphs.dijsktra as djk
 import DISClib.Algorithms.Graphs.prim as prim
 import DISClib.Algorithms.Graphs.scc as scc
 import DISClib.Algorithms.Graphs.dfo as dfo
@@ -62,6 +64,7 @@ def initialize():
                     'connections': None,
                     'components': None,
                     'paths': None,
+                    'mst': None,
                     'info_lp': None,
                     'info_cables': None,
                     'nodos_capitales': None,
@@ -338,16 +341,30 @@ def componentesConectados(analyzer):
     componentes conectados que tiene.
 
     Parámetros:
-        analyzer: el analyzer donde está guardado todo.
+        analyzer: el catálogo donde está guardado todo.
 
     Retorna:
         un entero, que es el número de componentes conectados.
     """
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    print(analyzer['components'])
     componentes = scc.connectedComponents(analyzer['components'])
     return componentes
 
 def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
+    """
+    A partir de los landing points que ingresa el usuario, encuentra
+    esos landing_point_id en los vértices y devuelve cada uno.
+
+    Parámetros:
+        analyzer: el catágologo donde está guardado todo.
+        landing_point1: el landing point A ingresado por el usuario.
+        landing_point2: el landing point B ingresado por el usuario.
+    
+    Retorna:
+        una tupla, donde [0] es el vértice correspondiente a landing_point1,
+        y [1] es el vértice correspondiente a landing_point2.
+    """
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
     mapa = analyzer['components']['idscc']
 
@@ -382,7 +399,7 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
     un landing point B.
 
     Parámetros:
-        analyzer: es el analyzer donde está todo guardado.
+        analyzer: el catálogo donde está todo guardado.
         landing_point1: el landing point A ingresado por el usuario.
         landing_point2: el landing point B ingresado por el usuario.
 
@@ -416,11 +433,64 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 # par consecutivo de landing points. Toca pensarlo.
 
 def encontrarCapitalDePais(analyzer, pais):
+    """
+    Partiendo del pais, encuentra su capital.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+        pais: pais ingresado por el usuario.
+
+    Retorna:
+        un string, en el que queda el formato coorecto
+        en el que está cada vértice, es decir,
+        nombre_capital*nombre_pais.
+    """
+    formato = ''
     mapa_paises = analyzer['countries']
     pareja = mp.get(mapa_paises, pais)
     valor = me.getValue(pareja)
-    print(valor)
+    infopais = valor['infopais']
+    capital = infopais['CapitalName']
+    formato = capital.lower() + '*' + pais
+    return formato
 
+def caminosMenorCosto(analyzer, pais):
+    """
+    Calcula los caminos de costo mínimo desde el pais ingresado
+    por el usuario a todos los demás vértices del grafo.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+        pais: el pais de origen ingresado por el usuario.
+
+    Retorna:
+        el analyzer, donde en la llave 'paths' queda guardados
+        los caminos de menor costo que devuleve el algortimo de
+        Dijkstra.
+    """
+    paisini = encontrarCapitalDePais(analyzer, pais)
+    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], paisini)
+    return analyzer
+
+def caminoMenorCosto(analyzer, pais):
+    """
+    Calcula el camino de costo mínimo entre el pais origen
+    (que se ingresa como parámetro en la función 'caminosMínimoCosto()')
+    y el pais destino que se ingresa en esta función.
+    Se debe ejecutar primero la función 'caminosMínimoCosto()'.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+        pais: el pais destino ingresado por el usuario.
+    
+    Retorna:
+        el camino de costo mínimo entre el pais de origen
+        y el pais destino.
+    """
+    paisfini = encontrarCapitalDePais(analyzer, pais)
+    camino = djk.pathTo(analyzer['paths'], paisfini)
+    print(analyzer['connections'])
+    return camino
 
 # ================
 # Requerimiento 4
@@ -433,6 +503,45 @@ def encontrarCapitalDePais(analyzer, pais):
 # usando la función edges() para tener una lista con todos los arcos. Esta lista
 # se puede recorrer, viendo el peso de cada arco y viendo cual es menor y cual
 # es mayor y así hasta sacar el mayor y el menor.
+
+def arbolExpansionMinima(analyzer):
+    analyzer['mst'] = prim.PrimMST(analyzer['connections'])
+    return analyzer['mst']
+
+def totalVerticesMST(analyzer):
+    mst = analyzer['mst']
+    total = gr.numVertices(mst)
+    return total
+
+def costoTotalArcosMST(analyzer):
+    mst = analyzer['mst']
+    total = prim.weightMST(mst)
+    return total
+
+# def conexionMasLargaMST(analyzer):
+#     mst = analyzer['mst']
+#     costo = 0.0
+#     mayor = 0.0
+#     prim.edgesMST(analyzer['connections'], mst)
+#     i = 1
+#     for 
+#         costo = edge.weigt(arco)
+#         if costo > mayor:
+#             mayor = costo
+#         i += 1
+    
+#     return mayor
+
+def conexionMasCortaMST(analyzer):
+    mst = analyzer['mst']
+    costo = 0.0
+    menor = 0.0
+    for cada_arco in lt.iterator(mst):
+        costo = edge.weigt(cada_arco)
+        if costo < menor:
+            menor = costo
+    
+    return menor
 
 # ================
 # Requerimiento 5

@@ -99,6 +99,21 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 def encontrarCapitalDePais(analyzer, pais):
     return model.encontrarCapitalDePais(analyzer, pais)
 
+def caminosMenorCosto(analyzer, pais):
+    return model.caminosMenorCosto(analyzer, pais)
+
+def caminoMenorCosto(analyzer, pais):
+    return model.caminoMenorCosto(analyzer, pais)
+
+def arbolExpansionMinima(analyzer):
+    return model.arbolExpansionMinima(analyzer)
+
+def conexionMasLargaMST(analyzer):
+    return model.conexionMasLargaMST(analyzer)
+
+def conexionMasCortaMST(analyzer):
+    return model.conexionMasCortaMST(analyzer)
+
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================
