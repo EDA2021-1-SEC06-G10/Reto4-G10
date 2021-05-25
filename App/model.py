@@ -226,12 +226,6 @@ def addLPtoCountry(pais, origin, catalog):
         lista=minidic['nodos_asoc']
         lt.addLast(lista, origin)
 
-def check(mapa, grafo):
-    var=gr.containsVertex(grafo, "5808-colombian-festoon")
-    value=mp.get(mapa,'colombia')
-    print(var)
-    return(value)    
-
 def addcableInfo(link, catalog):
     nombre= link['cable_id']
     info_cables= catalog['info_cables']
@@ -271,7 +265,8 @@ def connectCLP(catalog):
         else:
             lista_vertices= gr.vertices(grafo)
             nodocercano=findNearest(lista_vertices, loc_cap, mapalp)
-            addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
+            if nodocercano[1]!= None:
+                addEdges(grafo,nodo_capital,nodocercano[0],nodocercano[1])
         i+=1
 
 def ubicar_capital(minidic):
@@ -297,18 +292,18 @@ def findNearest(lista_vertices, loc1, mapalp):
     tamano= lt.size(lista_vertices)
     retorno=None
     while i < tamano:
-        dist=-1
+        dist=None
         elemento= lt.getElement(lista_vertices,i)
         pre= elemento.split('-')
         lp=pre[0]
         loc2=ubicarLp(lp,mapalp)
         if loc2!= (None,None):
             dist=hs.haversine(loc1, loc2)
-        if dist< menor:
-            menor= dist
-            retorno=elemento
+            if dist< menor:
+                menor= dist
+                retorno=elemento
         i+=1
-    return retorno, menor
+        return retorno, menor
     
 # =================================
 # Funciones para creacion de datos
