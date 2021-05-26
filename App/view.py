@@ -58,6 +58,11 @@ def print_Req1(landing_point1, landing_point2, booleano):
         print('Por otro lado, ' + str(landing_point1) + ' y ' + str(landing_point2) + ' no están en el mismo clúster.')
     print('*' * 25)
 
+def printResultsReq2(info_lp, cantidad_cables):
+    print('*' * 25)
+    print('El landing point: '+ info_lp[0] + " con numero de identificacion: " +info_lp[2]+ " se encuentra en" +info_lp[1])
+    print("Este tiene un total de " + str(cantidad_cables)+ " cables conectados a el")
+
 catalog = None
 
 """
@@ -86,9 +91,14 @@ while True:
         print_Req1(landing_point1, landing_point2, estan)
 
     elif int(inputs[0]) == 3:
-        pais = 'albania'
-        controller.encontrarCapitalDePais(analyzer, pais)
-        #print(capital)
+        resultado=controller.lp_mas_cables(analyzer)
+        i=0 
+        tamano= lt.size(resultado[1])
+        while i < tamano:
+            lp=lt.getElement(resultado[1],i)
+            info_del_lp= controller.infoLPmasCables(lp,analyzer)
+            printResultsReq2(info_del_lp, resultado[0])
+            i+=1
 
     elif int(inputs[0]) == 4:
         pass

@@ -99,6 +99,11 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 def encontrarCapitalDePais(analyzer, pais):
     return model.encontrarCapitalDePais(analyzer, pais)
 
+def lp_mas_cables(analyzer):
+    return model.lp_mas_cables(analyzer)
+
+def infoLPmasCables(lp, analyzer):
+    return model.infoLPmasCables(lp, analyzer)
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================
