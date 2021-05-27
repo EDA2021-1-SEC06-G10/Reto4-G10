@@ -99,6 +99,7 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 def encontrarCapitalDePais(analyzer, pais):
     return model.encontrarCapitalDePais(analyzer, pais)
 
+<<<<<<< HEAD
 def caminosMenorCosto(analyzer, pais):
     return model.caminosMenorCosto(analyzer, pais)
 
@@ -117,6 +118,13 @@ def conexionMasCortaMST(analyzer):
 def caminoMenorCostoLp(analyzer, landingA, landingB):
     return model.caminoMenorCostoLp(analyzer, landingA, landingB)
 
+=======
+def lp_mas_cables(analyzer):
+    return model.lp_mas_cables(analyzer)
+
+def infoLPmasCables(lp, analyzer):
+    return model.infoLPmasCables(lp, analyzer)
+>>>>>>> 7cfb6c55b633a03192291556b6e8fb612364cea5
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================

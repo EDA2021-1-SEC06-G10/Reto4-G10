@@ -416,6 +416,59 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 # Requerimiento 2
 # ================
 
+def lp_mas_cables(analyzer):
+    mapa_lp= analyzer['info_lp']
+    lista_landing_points= mp.keySet(mapa_lp)
+    tamano_llp= lt.size(lista_landing_points)
+    i=0
+    mayor=0
+    while i < tamano_llp:
+        elemento= lt.getElement(lista_landing_points,i)
+        entry= mp.get(mapa_lp, elemento)
+        if entry != None:
+            minidic= me.getValue(entry)
+            mapa_cables= minidic['cables']
+            lista_cables= mp.keySet(mapa_cables)
+            cantidad_cables= lt.size(lista_cables)
+            if cantidad_cables> mayor:
+                mayor= cantidad_cables
+                mas_cables= elemento
+        i+=1
+    lista_final = verificacion(mas_cables, analyzer, mayor)
+    return mayor, lista_final
+
+def verificacion(mas_cables, analyzer, mayor):
+    mapa_lp= analyzer['info_lp']
+    lista_landing_points= mp.keySet(mapa_lp)
+    tamano_llp= lt.size(lista_landing_points)
+    lp_ret= lt.newList('ARRAY_LIST')
+    lt.addLast(lp_ret, mas_cables)
+    i=0
+    while i < tamano_llp:
+        elemento= lt.getElement(lista_landing_points,i)
+        entry= mp.get(mapa_lp, elemento)
+        if entry != None:
+            minidic= me.getValue(entry)
+            mapa_cables= minidic['cables']
+            lista_cables= mp.keySet(mapa_cables)
+            cantidad_cables= lt.size(lista_cables)
+            if cantidad_cables == mayor:
+                if elemento != mas_cables:
+                    lt.addLast(lp_ret,elemento)
+        i+=1
+    return lp_ret
+
+
+def infoLPmasCables(lp, analyzer):
+    mapa_lp= analyzer['info_lp']
+    entry= mp.get(mapa_lp,lp)
+    minidic= me.getValue(entry)
+    info_lp= minidic['lp']
+    identificador=lp
+    nombre= info_lp['name']
+    pre= nombre.split(",")
+    pais= pre[(len(pre)-1)]
+    return nombre,pais,identificador
 # ================
 # Requerimiento 3
 # ================
