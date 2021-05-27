@@ -469,6 +469,7 @@ def infoLPmasCables(lp, analyzer):
     pre= nombre.split(",")
     pais= pre[(len(pre)-1)]
     return nombre,pais,identificador
+    
 # ================
 # Requerimiento 3
 # ================
