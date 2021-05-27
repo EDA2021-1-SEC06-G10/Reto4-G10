@@ -100,16 +100,19 @@ while True:
 
     elif int(inputs[0]) == 3:
         pais_ini = 'uruguay' #input('Ingrese el pais de origen: ')
-        controller.caminosMenorCosto(analyzer, pais_ini)
         formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
+        controller.caminosMenorCosto(analyzer, formato)
         print(formato)
 
     elif int(inputs[0]) == 4:
+        landingA = '5950'
+        landingB = '5825'
         pais_fini = 'argentina' #input('Ingrese el pais destino: ')
-        camino = controller.caminoMenorCosto(analyzer, pais_fini)
-        formato = controller.encontrarCapitalDePais(analyzer, pais_fini)
-        print(formato)
-        #print_Req3(camino)
+        #formato = controller.encontrarCapitalDePais(analyzer, pais_fini)
+        camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB)
+        #camino = controller.caminoMenorCosto(analyzer, formato)
+        #print(formato)
+        print_Req3(camino)
 
     elif int(inputs[0]) == 5:
         mst = controller.arbolExpansionMinima(analyzer)

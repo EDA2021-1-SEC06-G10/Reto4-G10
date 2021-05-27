@@ -303,7 +303,7 @@ def findNearest(lista_vertices, loc1, mapalp):
                 menor= dist
                 retorno=elemento
         i+=1
-        return retorno, menor
+    return retorno, menor
     
 # =================================
 # Funciones para creacion de datos
@@ -449,7 +449,7 @@ def encontrarCapitalDePais(analyzer, pais):
     formato = capital.lower() + '*' + pais
     return formato
 
-def caminosMenorCosto(analyzer, pais):
+def caminosMenorCosto(analyzer, paisini):
     """
     Calcula los caminos de costo mínimo desde el pais ingresado
     por el usuario a todos los demás vértices del grafo.
@@ -463,11 +463,12 @@ def caminosMenorCosto(analyzer, pais):
         los caminos de menor costo que devuleve el algortimo de
         Dijkstra.
     """
-    paisini = encontrarCapitalDePais(analyzer, pais)
+    #paisini = encontrarCapitalDePais(analyzer, pais)
     analyzer['paths'] = djk.Dijkstra(analyzer['connections'], paisini)
+    print(analyzer['paths'])
     return analyzer
 
-def caminoMenorCosto(analyzer, pais):
+def caminoMenorCosto(analyzer, paisfini):
     """
     Calcula el camino de costo mínimo entre el pais origen
     (que se ingresa como parámetro en la función 'caminosMínimoCosto()')
@@ -482,9 +483,19 @@ def caminoMenorCosto(analyzer, pais):
         el camino de costo mínimo entre el pais de origen
         y el pais destino.
     """
-    paisfini = encontrarCapitalDePais(analyzer, pais)
+    #paisfini = encontrarCapitalDePais(analyzer, pais)
     camino = djk.pathTo(analyzer['paths'], paisfini)
-    print(analyzer['connections'])
+    #print(analyzer['connections'])
+    return camino
+
+def caminoMenorCostoLp(analyzer, landingA, landingB):
+    landingpoints = compareLpUserLpGraph(analyzer, landingA, landingB)
+    lpA = landingpoints[0]
+    lpB = landingpoints[1]
+
+    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], lpA)
+    #print(analyzer['paths'])
+    camino = djk.pathTo(analyzer['paths'], lpB)
     return camino
 
 # ================
@@ -494,10 +505,15 @@ def caminoMenorCosto(analyzer, pais):
 # La idea es usar Prim para encontrar el árbol de expansión mínima. Con el árbol
 # ya calculado, se necesita usar numVertices() para encontrar el número de nodos
 # que son parte del árbol. Para saber el costo total del árbol se puede usar
-# weightMST(). La conexión más larga y la conexión más corta se podrían calcular
-# usando la función edges() para tener una lista con todos los arcos. Esta lista
-# se puede recorrer, viendo el peso de cada arco y viendo cual es menor y cual
-# es mayor y así hasta sacar el mayor y el menor.
+# weightMST(). 
+# Ahora, para la conexión de mayor y menor distancia:
+# Usar la funcion vetices para tener la lista de vértices del MST. Visitar cada vétice y usar
+# dijkstra (o DFS, está por verse) por cada vértice (con esto encontramos los caminos desde cada
+# vértice hasta todos los vértices). De lo que devuelve eso se usa distTo para sacar la distancia
+# entre el vértice A y todos los que tiene conexión. Ese valor se puede guardar en un diccionario
+# estilo: {'conexion':vertexA-vertexB, 'costo': int} y cada uno de esos diccionarios se van guardando
+# en una lista tipo array. Esa lista se puede ordenar de mayor a menor dependiendo del costo y con eso
+# se tiene la conexión más larga y la más corta.s
 
 def arbolExpansionMinima(analyzer):
     analyzer['mst'] = prim.PrimMST(analyzer['connections'])
@@ -513,30 +529,6 @@ def costoTotalArcosMST(analyzer):
     total = prim.weightMST(mst)
     return total
 
-# def conexionMasLargaMST(analyzer):
-#     mst = analyzer['mst']
-#     costo = 0.0
-#     mayor = 0.0
-#     prim.edgesMST(analyzer['connections'], mst)
-#     i = 1
-#     for 
-#         costo = edge.weigt(arco)
-#         if costo > mayor:
-#             mayor = costo
-#         i += 1
-    
-#     return mayor
-
-def conexionMasCortaMST(analyzer):
-    mst = analyzer['mst']
-    costo = 0.0
-    menor = 0.0
-    for cada_arco in lt.iterator(mst):
-        costo = edge.weigt(cada_arco)
-        if costo < menor:
-            menor = costo
-    
-    return menor
 
 # ================
 # Requerimiento 5

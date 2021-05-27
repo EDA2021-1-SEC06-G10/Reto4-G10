@@ -114,6 +114,9 @@ def conexionMasLargaMST(analyzer):
 def conexionMasCortaMST(analyzer):
     return model.conexionMasCortaMST(analyzer)
 
+def caminoMenorCostoLp(analyzer, landingA, landingB):
+    return model.caminoMenorCostoLp(analyzer, landingA, landingB)
+
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================
