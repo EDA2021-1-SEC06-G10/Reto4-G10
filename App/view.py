@@ -42,8 +42,8 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Identificar los clústeres de comunicación")
-    print("3- Establecer estación base")
-    print("4- Identificar los puntos de conexión críticos de la red")
+    print("3- Identificar los puntos de conexión críticos de la red")
+    print("4- Establecer estación base")
     print("5- Identificar la ruta de menor distancia")
     print("6- Identificar la Infraestructura crítica de la red")
     print("7- Análisis de fallas")
@@ -61,7 +61,6 @@ def print_Req1(landing_point1, landing_point2, booleano):
         print('Por otro lado, ' + str(landing_point1) + ' y ' + str(landing_point2) + ' no están en el mismo clúster.')
     print('*' * 25)
 
-<<<<<<< HEAD
 def print_Req3(camino):
     if camino is not None:
         distCamino = stk.size(camino)
@@ -71,12 +70,11 @@ def print_Req3(camino):
             print(cada_vertice)
     else:
         print('No hay camino.')
-=======
+
 def printResultsReq2(info_lp, cantidad_cables):
     print('*' * 25)
     print('El landing point: '+ info_lp[0] + " con numero de identificacion: " +info_lp[2]+ " se encuentra en" +info_lp[1])
     print("Este tiene un total de " + str(cantidad_cables)+ " cables conectados a el")
->>>>>>> 7cfb6c55b633a03192291556b6e8fb612364cea5
 
 catalog = None
 
@@ -106,12 +104,6 @@ while True:
         print_Req1(landing_point1, landing_point2, estan)
 
     elif int(inputs[0]) == 3:
-<<<<<<< HEAD
-        pais_ini = 'uruguay' #input('Ingrese el pais de origen: ')
-        formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
-        controller.caminosMenorCosto(analyzer, formato)
-        print(formato)
-=======
         resultado=controller.lp_mas_cables(analyzer)
         i=0 
         tamano= lt.size(resultado[1])
@@ -120,9 +112,14 @@ while True:
             info_del_lp= controller.infoLPmasCables(lp,analyzer)
             printResultsReq2(info_del_lp, resultado[0])
             i+=1
->>>>>>> 7cfb6c55b633a03192291556b6e8fb612364cea5
 
     elif int(inputs[0]) == 4:
+        pais_ini = 'uruguay' #input('Ingrese el pais de origen: ')
+        formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
+        controller.caminosMenorCosto(analyzer, formato)
+        print(formato)
+
+    elif int(inputs[0]) == 5:
         landingA = '5950'
         landingB = '5825'
         pais_fini = 'argentina' #input('Ingrese el pais destino: ')
@@ -132,18 +129,22 @@ while True:
         #print(formato)
         print_Req3(camino)
 
-    elif int(inputs[0]) == 5:
-        mst = controller.arbolExpansionMinima(analyzer)
-        #distCorta = controller.conexionMasCortaMST(analyzer)
-        #distLarga = controller.conexionMasLargaMST(analyzer)
-        #print(distCorta)
-        print(mst)
-
     elif int(inputs[0]) == 6:
-        pass
+        controller.arbolExpansionMinima(analyzer)
+        #distancias = controller.distanciasMST(mst)
+        total = controller.totalVerticesMST(analyzer)
+        costo = controller.costoTotalArcosMST(analyzer)
+        print(total)
 
     elif int(inputs[0]) == 7:
-        pass
+        landing_point1 = '5950'
+        landing_point2 = '5825'
+        formato = controller.LpCualPais(analyzer, landing_point1, landing_point2)
+        controller.paisDFS(analyzer, formato)
+        tabla = controller.estaConectado(analyzer, formato)
+        total = controller.totalPaisesAfectados(tabla)
+        print(total[0])
+        print(total[1])
 
     else:
         sys.exit(0)

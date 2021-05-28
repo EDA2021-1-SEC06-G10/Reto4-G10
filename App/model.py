@@ -33,7 +33,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import graph as gr
 from DISClib.DataStructures import edge as edge
-import DISClib.Algorithms.Graphs.dfs as dfs
+import DISClib.Algorithms.Graphs.dfs as depth
 import DISClib.Algorithms.Graphs.dijsktra as djk
 import DISClib.Algorithms.Graphs.prim as prim
 import DISClib.Algorithms.Graphs.scc as scc
@@ -65,6 +65,7 @@ def initialize():
                     'components': None,
                     'paths': None,
                     'mst': None,
+                    'dfs': None,
                     'info_lp': None,
                     'info_cables': None,
                     'nodos_capitales': None,
@@ -342,7 +343,7 @@ def componentesConectados(analyzer):
         un entero, que es el número de componentes conectados.
     """
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
-    print(analyzer['components'])
+    #print(analyzer['components'])
     componentes = scc.connectedComponents(analyzer['components'])
     return componentes
 
@@ -366,6 +367,7 @@ def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
     lista_llaves = mp.keySet(mapa)
     size = lt.size(lista_llaves)
 
+    # Para el Landing Point A
     i = 1
     centinelaA = False
     while i < size or centinelaA == False:
@@ -376,6 +378,7 @@ def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
             lpA = cada_elemento
         i += 1
     
+    # Para el Landing Point B
     j = 1
     centinelaB = False
     while j < size or centinelaB == False:
@@ -417,59 +420,61 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
 # ================
 
 def lp_mas_cables(analyzer):
-    mapa_lp= analyzer['info_lp']
-    lista_landing_points= mp.keySet(mapa_lp)
-    tamano_llp= lt.size(lista_landing_points)
-    i=0
-    mayor=0
+    mapa_lp = analyzer['info_lp']
+    lista_landing_points = mp.keySet(mapa_lp)
+    tamano_llp = lt.size(lista_landing_points)
+    i = 0
+    mayor = 0
     while i < tamano_llp:
-        elemento= lt.getElement(lista_landing_points,i)
-        entry= mp.get(mapa_lp, elemento)
+        elemento = lt.getElement(lista_landing_points,i)
+        entry = mp.get(mapa_lp, elemento)
         if entry != None:
-            minidic= me.getValue(entry)
-            mapa_cables= minidic['cables']
-            lista_cables= mp.keySet(mapa_cables)
-            cantidad_cables= lt.size(lista_cables)
-            if cantidad_cables> mayor:
-                mayor= cantidad_cables
-                mas_cables= elemento
-        i+=1
+            minidic = me.getValue(entry)
+            mapa_cables = minidic['cables']
+            lista_cables = mp.keySet(mapa_cables)
+            cantidad_cables = lt.size(lista_cables)
+            if cantidad_cables > mayor:
+                mayor = cantidad_cables
+                mas_cables = elemento
+        i += 1
+
     lista_final = verificacion(mas_cables, analyzer, mayor)
-    return mayor, lista_final
+    return (mayor, lista_final)
 
 def verificacion(mas_cables, analyzer, mayor):
-    mapa_lp= analyzer['info_lp']
-    lista_landing_points= mp.keySet(mapa_lp)
-    tamano_llp= lt.size(lista_landing_points)
-    lp_ret= lt.newList('ARRAY_LIST')
+    mapa_lp = analyzer['info_lp']
+    lista_landing_points = mp.keySet(mapa_lp)
+    tamano_llp = lt.size(lista_landing_points)
+    lp_ret = lt.newList('ARRAY_LIST')
     lt.addLast(lp_ret, mas_cables)
-    i=0
+    i = 0
     while i < tamano_llp:
-        elemento= lt.getElement(lista_landing_points,i)
-        entry= mp.get(mapa_lp, elemento)
+        elemento = lt.getElement(lista_landing_points,i)
+        entry = mp.get(mapa_lp, elemento)
         if entry != None:
-            minidic= me.getValue(entry)
-            mapa_cables= minidic['cables']
-            lista_cables= mp.keySet(mapa_cables)
-            cantidad_cables= lt.size(lista_cables)
+            minidic = me.getValue(entry)
+            mapa_cables = minidic['cables']
+            lista_cables = mp.keySet(mapa_cables)
+            cantidad_cables = lt.size(lista_cables)
             if cantidad_cables == mayor:
                 if elemento != mas_cables:
                     lt.addLast(lp_ret,elemento)
-        i+=1
+        i += 1
+
     return lp_ret
 
 
 def infoLPmasCables(lp, analyzer):
-    mapa_lp= analyzer['info_lp']
-    entry= mp.get(mapa_lp,lp)
-    minidic= me.getValue(entry)
-    info_lp= minidic['lp']
-    identificador=lp
-    nombre= info_lp['name']
-    pre= nombre.split(",")
-    pais= pre[(len(pre)-1)]
-    return nombre,pais,identificador
-    
+    mapa_lp = analyzer['info_lp']
+    entry = mp.get(mapa_lp,lp)
+    minidic = me.getValue(entry)
+    info_lp = minidic['lp']
+    identificador = lp
+    nombre = info_lp['name']
+    pre = nombre.split(",")
+    pais = pre[(len(pre) - 1)]
+    return (nombre,pais,identificador)
+
 # ================
 # Requerimiento 3
 # ================
@@ -560,29 +565,91 @@ def caminoMenorCostoLp(analyzer, landingA, landingB):
 # ya calculado, se necesita usar numVertices() para encontrar el número de nodos
 # que son parte del árbol. Para saber el costo total del árbol se puede usar
 # weightMST(). 
+
 # Ahora, para la conexión de mayor y menor distancia:
 # Usar la funcion vetices para tener la lista de vértices del MST. Visitar cada vétice y usar
-# dijkstra (o DFS, está por verse) por cada vértice (con esto encontramos los caminos desde cada
+# Dijkstra (o DFS, está por verse) por cada vértice (con esto encontramos los caminos desde cada
 # vértice hasta todos los vértices). De lo que devuelve eso se usa distTo para sacar la distancia
 # entre el vértice A y todos los que tiene conexión. Ese valor se puede guardar en un diccionario
-# estilo: {'conexion':vertexA-vertexB, 'costo': int} y cada uno de esos diccionarios se van guardando
+# estilo: {'conexion': vertexA-vertexB, 'costo': int} y cada uno de esos diccionarios se van guardando
 # en una lista tipo array. Esa lista se puede ordenar de mayor a menor dependiendo del costo y con eso
-# se tiene la conexión más larga y la más corta.s
+# se tiene la conexión más larga y la más cortas.
+
+# En realidad, todo el tema de Dijkstra se puede evitar si se usa la función 'scan' de Prim. Esta devuelve
+# el costo total desde un vértice A hasta un vértice B. El resto (lo del diccionario y la lista) sí hay que
+# hacerlo, pero lo de Dijkstra no es necesario.
 
 def arbolExpansionMinima(analyzer):
-    analyzer['mst'] = prim.PrimMST(analyzer['connections'])
+    """
+    Encuentra el árbol de expansión mínima.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+
+    Return:
+        el árbol de expansión mínima. Este se guarda en el catálogo
+        asociado a la llave 'mst'.
+    """
+    grafo = analyzer['connections']
+    cola = prim.PrimMST(analyzer['connections'])
+    analyzer['mst'] = prim.prim(grafo, cola, None) # Necesita un vértice del que
+                                                   # empezar. No sabría bien cuál.
     return analyzer['mst']
 
 def totalVerticesMST(analyzer):
+    """
+    Devuelve el total de vértices del árbol de expansión mínima.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+
+    Return:
+        un entero, que representa el total de vértices en el árbol.
+    """
     mst = analyzer['mst']
     total = gr.numVertices(mst)
     return total
 
 def costoTotalArcosMST(analyzer):
+    """
+    Devuelve el costo total del árbol de expansión mínima.
+
+    Parámetros:
+        analyzer: el catálogo donde está guardado todo.
+
+    Return:
+        un entero, que representa el costo total del árbol
+        de expansión mínima.
+    """
+    grafo = analyzer['connections']
     mst = analyzer['mst']
-    total = prim.weightMST(mst)
+    total = prim.weightMST(grafo, mst)
     return total
 
+def distanciasMST(mst):
+    lista_vertices = gr.vertices(mst)
+    tamaño_lista = lt.size(lista_vertices)
+    lista_distancias = lt.newList('ARRAY_LIST')
+    i = 1
+    while i < tamaño_lista:
+        vertice = lt.getElement(lista_vertices, i)
+        spt = djk.Dijkstra(mst, vertice)
+        lista_vertices_djk = gr.vertices(spt)
+        tamaño_vertices_djk = lt.size(lista_vertices_djk)
+        j = 1
+        while j < tamaño_vertices_djk:
+            verticeDest = lt.getElement(lista_vertices_djk, j)
+            if verticeDest != vertice:
+                distancia = djk.distTo(spt, verticeDest)
+                diccionario = {}
+                diccionario['conexion'] = (vertice, verticeDest)
+                diccionario['distancia'] = distancia
+                lt.addLast(lista_distancias, diccionario)
+            j += 1
+        
+        i += 1
+
+    return lista_vertices
 
 # ================
 # Requerimiento 5
@@ -600,6 +667,46 @@ def costoTotalArcosMST(analyzer):
 # sería el KeySet() (o para mejor orden se puede recorrer ese KeySet y pasarlo a otra lista,
 # pero no creo que valga la pena). Esta lista debería estar en orden de [km] decreciente, pero
 # eso es un detalle para después.
+
+def LpCualPais(analyzer, landing_point1, landing_point2):
+    lpA = compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
+    origin = lpA[0]
+    pais = findLPtoCountry(analyzer, origin)
+    formato = encontrarCapitalDePais(analyzer, pais)
+    return formato
+
+def paisDFS(analyzer, pais):
+    analyzer['dfs'] = depth.DepthFirstSearch(analyzer['connections'], pais)
+    dfs = depth.dfsVertex(analyzer['dfs'], analyzer['connections'], pais)
+    return dfs
+
+def estaConectado(analyzer, pais):
+    lista_vertices = gr.vertices(analyzer['connections'])
+    dfs = paisDFS(analyzer, pais)
+    paises_afectados = mp.newMap(maptype='CHAINING', loadfactor=0.5)
+    tamaño = lt.size(lista_vertices)
+    i = 1
+    while i < tamaño:
+        vertice = lt.getElement(lista_vertices, i)
+        if vertice != pais:
+            tiene = depth.hasPathTo(analyzer['dfs'], vertice)
+            if tiene == True:
+                if vertice[0] == '1' or vertice[0] == '2' or vertice[0] == '3' or vertice[0] == '4' or vertice[0] == '5' or vertice[0] == '6' or vertice[0] == '7' or vertice[0] == '8' or vertice[0] == '9' or vertice[0] == '0':
+                    paisA = findLPtoCountry(analyzer, vertice)  
+                    mp.put(paises_afectados, paisA, None)
+                else:
+                    cadena = vertice.split('*')
+                    paisA = cadena[1]
+                    mp.put(paises_afectados, paisA, None)
+        i += 1
+
+    return paises_afectados
+
+def totalPaisesAfectados(tabla):
+    lista_paises = mp.keySet(tabla)
+    total_paises = lt.size(lista_paises)
+    return (lista_paises, total_paises)
+    
 
 # ================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -622,6 +729,14 @@ def compareLPids(lp, lp2):
         return 1
     else:
         return-1
+
+def comparePaises(pais1, pais2):
+    if pais1 > pais2:
+        return 1
+    elif pais1 < pais2:
+        return -1
+    else:
+        return 0
 
 # ===================
 # Funcion de formato
