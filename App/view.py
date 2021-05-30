@@ -76,6 +76,21 @@ def printResultsReq2(info_lp, cantidad_cables):
     print('El landing point: '+ info_lp[0] + " con numero de identificacion: " +info_lp[2]+ " se encuentra en" +info_lp[1])
     print("Este tiene un total de " + str(cantidad_cables)+ " cables conectados a el")
 
+def printReq5(resultado, lp_name):
+    print('*' * 25)
+    print('Si falla el landing point: '+ lp_name + " habría  " +str(resultado[1])+ " paises afectados")
+    print('\nEstos paises son: ')
+    i=0
+    tamano=lt.size(resultado[0][1])
+    while i < tamano:
+        dic= lt.getElement(resultado[0][1], i)
+        pais=dic['pais']
+        distancia=dic['distancia']
+        print(pais+ " se encontraría afectado y tiene un lp a " +str(distancia)+ " km")
+        i+=1
+
+    
+
 catalog = None
 
 """
@@ -130,11 +145,14 @@ while True:
         print_Req3(camino)
 
     elif int(inputs[0]) == 6:
-        controller.arbolExpansionMinima(analyzer)
-        #distancias = controller.distanciasMST(mst)
-        total = controller.totalVerticesMST(analyzer)
-        costo = controller.costoTotalArcosMST(analyzer)
-        print(total)
+        nombrelp=input("Ingrese el nombre del landing point: ")
+        nombrelp=nombrelp.lower()
+        id_lp=controller.findLPfromName(nombrelp, analyzer)
+        print(id_lp)
+        resultado= controller.findCountriesAffected(analyzer,id_lp)
+        print(resultado[0])
+        printReq5(resultado, nombrelp)
+        
 
     elif int(inputs[0]) == 7:
         landing_point1 = '5950'

@@ -144,6 +144,12 @@ def estaConectado(analyzer, pais):
 def totalPaisesAfectados(tabla):
     return model.totalPaisesAfectados(tabla)
 
+def findLPfromName(nombre, catalog): 
+    return model.findLPfromName(nombre, catalog)
+
+def findCountriesAffected(catalog, lp_id):
+    return model.findCountriesAffected(catalog, lp_id)
+
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================
