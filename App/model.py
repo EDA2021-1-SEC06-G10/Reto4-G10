@@ -347,7 +347,7 @@ def componentesConectados(analyzer):
     componentes = scc.connectedComponents(analyzer['components'])
     return componentes
 
-def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
+def compareLpUserLpGraph(analyzer, landing_point1):
     """
     A partir de los landing points que ingresa el usuario, encuentra
     esos landing_point_id en los vértices y devuelve cada uno.
@@ -355,11 +355,10 @@ def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
     Parámetros:
         analyzer: el catágologo donde está guardado todo.
         landing_point1: el landing point A ingresado por el usuario.
-        landing_point2: el landing point B ingresado por el usuario.
+
     
     Retorna:
-        una tupla, donde [0] es el vértice correspondiente a landing_point1,
-        y [1] es el vértice correspondiente a landing_point2.
+        un string, que es el vértice correspondiente a landing_point1..
     """
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
     mapa = analyzer['components']['idscc']
@@ -367,29 +366,38 @@ def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
     lista_llaves = mp.keySet(mapa)
     size = lt.size(lista_llaves)
 
-    # Para el Landing Point A
+    informacion = analyzer['info_lp']
+    lista_lp = mp.keySet(informacion)
+    tamaño_lp = lt.size(lista_lp)
+
+    lpnumber = None
+
     i = 1
     centinelaA = False
-    while i < size or centinelaA == False:
-        cada_elemento = lt.getElement(lista_llaves, i)
-        lp = cada_elemento.split('-')[0]
-        if lp == landing_point1:
+    while i < tamaño_lp and centinelaA == False:
+        elemento = lt.getElement(lista_lp, i)
+        pareja = mp.get(informacion, elemento)
+        valor = me.getValue(pareja)
+        ciudad_pais = valor['lp']['name']
+        cadena = ciudad_pais.split(',')
+        nombre = cadena[0]
+        if landing_point1 == nombre:
+            print('entré')
+            lpnumber = elemento
             centinelaA = True
-            lpA = cada_elemento
         i += 1
-    
-    # Para el Landing Point B
+
     j = 1
     centinelaB = False
     while j < size or centinelaB == False:
         cada_elemento = lt.getElement(lista_llaves, j)
         lp = cada_elemento.split('-')[0]
-        if lp == landing_point2:
+        if lp == lpnumber:
             centinelaB = True
-            lpB = cada_elemento
+            lpA = cada_elemento
         j += 1
-    
-    return (lpA, lpB)
+     
+    return lpA
         
 def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
     """
@@ -406,9 +414,8 @@ def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
         están en el mismo clúster. False significa que ambos landing
         points no están en el mismo clúster.
     """
-    landing_points = compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
-    lpA = landing_points[0]
-    lpB = landing_points[1]
+    lpA = compareLpUserLpGraph(analyzer, landing_point1)
+    lpB = compareLpUserLpGraph(analyzer, landing_point2)
 
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
     esta = scc.stronglyConnected(analyzer['components'], lpA, lpB)
@@ -567,7 +574,7 @@ def caminoMenorCostoLp(analyzer, landingA, landingB):
 # weightMST(). 
 
 # Ahora, para la conexión de mayor y menor distancia:
-# Usar la funcion vetices para tener la lista de vértices del MST. Visitar cada vétice y usar
+# Usar la funcion vertices para tener la lista de vértices del MST. Visitar cada vétice y usar
 # Dijkstra (o DFS, está por verse) por cada vértice (con esto encontramos los caminos desde cada
 # vértice hasta todos los vértices). De lo que devuelve eso se usa distTo para sacar la distancia
 # entre el vértice A y todos los que tiene conexión. Ese valor se puede guardar en un diccionario
@@ -591,9 +598,7 @@ def arbolExpansionMinima(analyzer):
         asociado a la llave 'mst'.
     """
     grafo = analyzer['connections']
-    cola = prim.PrimMST(analyzer['connections'])
-    analyzer['mst'] = prim.prim(grafo, cola, None) # Necesita un vértice del que
-                                                   # empezar. No sabría bien cuál.
+    analyzer['mst'] = prim.PrimMST(analyzer['connections'])
     return analyzer['mst']
 
 def totalVerticesMST(analyzer):
@@ -626,27 +631,30 @@ def costoTotalArcosMST(analyzer):
     total = prim.weightMST(grafo, mst)
     return total
 
-def distanciasMST(mst):
-    lista_vertices = gr.vertices(mst)
-    tamaño_lista = lt.size(lista_vertices)
-    lista_distancias = lt.newList('ARRAY_LIST')
+def distanciasMST(analyzer):
+    grafo = analyzer['connections']
+    mst = arbolExpansionMinima(analyzer)
+    vertices = gr.vertices(grafo)
+    tamaño = lt.size(vertices)
+
+    lista_vertices = lt.newList('ARRAY_LIST')
+    
     i = 1
-    while i < tamaño_lista:
-        vertice = lt.getElement(lista_vertices, i)
-        spt = djk.Dijkstra(mst, vertice)
-        lista_vertices_djk = gr.vertices(spt)
-        tamaño_vertices_djk = lt.size(lista_vertices_djk)
+    while i < tamaño:
+        vertice = lt.getElement(vertices, i)
+        grafo_arbol = prim.prim(grafo, mst, vertice)
+        vertices_prim = gr.vertices(grafo_arbol)
+        tamaño_vertices = lt.size(vertices_prim)
         j = 1
-        while j < tamaño_vertices_djk:
-            verticeDest = lt.getElement(lista_vertices_djk, j)
-            if verticeDest != vertice:
-                distancia = djk.distTo(spt, verticeDest)
+        while j < tamaño_vertices:
+            cada_vertice = lt.getElement(tamaño_vertices, j)
+            if cada_vertice != vertice:
+                distancia = prim.scan(grafo, mst, cada_vertice)
                 diccionario = {}
-                diccionario['conexion'] = (vertice, verticeDest)
+                diccionario['conexion'] = (vertice, cada_vertice)
                 diccionario['distancia'] = distancia
-                lt.addLast(lista_distancias, diccionario)
+                lt.addLast(diccionario)
             j += 1
-        
         i += 1
 
     return lista_vertices

@@ -93,7 +93,7 @@ while True:
         #print(vertices, aristas)
 
     elif int(inputs[0]) == 2:
-        # 5950 y 3210 están en el mismo clúster.
+        # 5950 (Port Sudan) y 3210 (Marseille) están en el mismo clúster.
         # 5950 y 5774 no están en el mismo clúster.
         landing_point1 = '5950' #input('Ingrese el landing point A: ')
         landing_point2 = '3210' #input('Ingrese el landing point B: ')
@@ -130,11 +130,11 @@ while True:
         print_Req3(camino)
 
     elif int(inputs[0]) == 6:
-        controller.arbolExpansionMinima(analyzer)
-        #distancias = controller.distanciasMST(mst)
-        total = controller.totalVerticesMST(analyzer)
-        costo = controller.costoTotalArcosMST(analyzer)
-        print(total)
+        #mst  = controller.arbolExpansionMinima(analyzer)
+        distancias = controller.distanciasMST(analyzer)
+        #total = controller.totalVerticesMST(analyzer)
+        #costo = controller.costoTotalArcosMST(analyzer)
+        print(distancias)
 
     elif int(inputs[0]) == 7:
         landing_point1 = '5950'
