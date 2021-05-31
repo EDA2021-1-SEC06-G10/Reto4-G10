@@ -406,7 +406,7 @@ def compareLpUserLpGraph(analyzer, landing_point1):
         cadena = ciudad_pais.split(',')
         nombre = cadena[0]
         if landing_point1 == nombre:
-            print('entré')
+            #print('entré')
             lpnumber = elemento
             centinelaA = True
         i += 1
@@ -494,7 +494,6 @@ def verificacion(mas_cables, analyzer, mayor):
 
     return lp_ret
 
-
 def infoLPmasCables(lp, analyzer):
     mapa_lp = analyzer['info_lp']
     entry = mp.get(mapa_lp,lp)
@@ -555,7 +554,7 @@ def caminosMenorCosto(analyzer, pais):
     """
     paisini = encontrarCapitalDePais(analyzer, pais)
     analyzer['paths'] = djk.Dijkstra(analyzer['connections'], paisini)
-    print(analyzer['paths'])
+    #print(analyzer['paths'])
     return analyzer
 
 def caminoMenorCosto(analyzer, pais):
@@ -618,7 +617,6 @@ def arbolExpansionMinima(analyzer):
         el árbol de expansión mínima. Este se guarda en el catálogo
         asociado a la llave 'mst'.
     """
-    grafo = analyzer['connections']
     analyzer['mst'] = prim.PrimMST(analyzer['connections'])
     return analyzer['mst']
 
@@ -709,14 +707,14 @@ def findCountriesAffected(catalog, lp_id):
     minidic=me.getValue(entry)
     mapa_lps_asoc= minidic['LPsC']
     lista_lp_asoc=mp.keySet(mapa_lps_asoc)
-    print(lista_lp_asoc)
+    #print(lista_lp_asoc)
     i=1
     tamano =lt.size(lista_lp_asoc)
     lista_paises=lt.newList("ARRAY_LIST")
     while i < tamano+1:
         elemento= lt.getElement(lista_lp_asoc,i)
         entry = mp.get(mapa_lp, elemento)
-        print(elemento)
+        #print(elemento)
         if entry != None:
             dic_list={}
             entry2=mp.get(mapa_lps_asoc, elemento)
@@ -728,9 +726,22 @@ def findCountriesAffected(catalog, lp_id):
             print(lista_paises)
             print(dic_list)
         i += 1
+
     cantidad_paises= lt.size(lista_paises)
     lista_paises=SortbyDist(lista_paises)
     return lista_paises, cantidad_paises
+
+# =========
+# Limpieza
+# =========
+
+def limpieza(lista):
+    """
+    Convierte cualquier tipo de dato que es requerido temporalmente
+    en None.
+    """
+    lista = None
+    return lista
 
 # ================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -761,14 +772,15 @@ def comparePaises(pais1, pais2):
         return -1
     else:
         return 0
+
 def comparedist(pais1,pais2):
     result = pais1['distancia'] > pais2['distancia']
     return result   
     
 
-# ===================
-# Funcion de formato
-# ===================
+# =====================
+# Funciones de formato
+# =====================
 
 def length(string):
     if string=="n.a.":
@@ -779,7 +791,9 @@ def length(string):
         string= string.replace(",","")
     return string
     
+# ==========================
 # Funciones de ordenamiento
+# ==========================
 
 def SortbyDist(lista):
     size = lt.size(lista)

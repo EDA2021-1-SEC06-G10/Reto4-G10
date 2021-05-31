@@ -110,8 +110,8 @@ while True:
     elif int(inputs[0]) == 2:
         # 5950 (Port Sudan) y 3210 (Marseille) están en el mismo clúster.
         # 5950 y 5774 no están en el mismo clúster.
-        landing_point1 = '5950' #input('Ingrese el landing point A: ')
-        landing_point2 = '3210' #input('Ingrese el landing point B: ')
+        landing_point1 = 'Port Sudan' #input('Ingrese el landing point A: ')
+        landing_point2 = 'Marseille' #input('Ingrese el landing point B: ')
         componentes = controller.componentesConectados(analyzer)
         estan = controller.estanLosDosLandingPoints(analyzer, landing_point1, landing_point2)
         print('*' * 25)
@@ -120,7 +120,7 @@ while True:
 
     elif int(inputs[0]) == 3:
         resultado = controller.lp_mas_cables(analyzer)
-        i = 0 
+        i = 1 
         tamano = lt.size(resultado[1])
         while i < tamano:
             lp = lt.getElement(resultado[1],i)

@@ -23,7 +23,9 @@
 import config as cf
 import model
 import csv
-
+from datetime import datetime
+import time
+import tracemalloc
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -88,10 +90,36 @@ def connectCLP(catalog):
 # ========================================
 
 def componentesConectados(analyzer):
-    return model.componentesConectados(analyzer)
+    componentes = None
+    delta_time = -1.0
+    delta_memory = -1.0
 
-def compareLpUserLpGraph(analyzer, landing_point1, landing_point2):
-    return model.compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    componentes =  model.componentesConectados(analyzer)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (componentes)
+
+def compareLpUserLpGraph(analyzer, landing_point1):
+    return model.compareLpUserLpGraph(analyzer, landing_point1)
 
 def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
     return model.estanLosDosLandingPoints(analyzer, landing_point1, landing_point2)
@@ -100,10 +128,62 @@ def encontrarCapitalDePais(analyzer, pais):
     return model.encontrarCapitalDePais(analyzer, pais)
 
 def caminosMenorCosto(analyzer, pais):
-    return model.caminosMenorCosto(analyzer, pais)
+    camino = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+
+    camino = model.caminosMenorCosto(analyzer, pais)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (camino)
 
 def caminoMenorCosto(analyzer, pais):
-    return model.caminoMenorCosto(analyzer, pais)
+    lp = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    camino = model.caminoMenorCosto(analyzer, pais)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (camino)
 
 def arbolExpansionMinima(analyzer):
     return model.arbolExpansionMinima(analyzer)
@@ -121,7 +201,33 @@ def lp_mas_cables(analyzer):
     return model.lp_mas_cables(analyzer)
 
 def infoLPmasCables(lp, analyzer):
-    return model.infoLPmasCables(lp, analyzer)
+    lp = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    lp = model.infoLPmasCables(lp, analyzer)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (lp)
 
 def distanciasMST(analyzer):
     return model.distanciasMST(analyzer)
@@ -148,8 +254,68 @@ def findLPfromName(nombre, catalog):
     return model.findLPfromName(nombre, catalog)
 
 def findCountriesAffected(catalog, lp_id):
-    return model.findCountriesAffected(catalog, lp_id)
+    countries = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    countries = model.findCountriesAffected(catalog, lp_id)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+
+    return (countries)
 
 # ============================================
 # Funciones para consulta de tiempo y memoria
 # ============================================
+
+def getTime():
+    """
+    Devuelve el instante de tiempo de procesamiento en milisegundos.
+    """
+    return float(time.perf_counter() * 1000)
+
+def getMemory():
+    """
+    Toma una muestra de la memoria alocada en el instante de tiempo.
+    """
+    return tracemalloc.take_snapshot()
+
+def deltaMemory(start_memory, stop_memory):
+    """
+    Calcula la diferencia en memoria alocada del programa entre dos
+    instantes de tiempo y devuelve el resultado en bytes (ej.: 2100.0 B)
+    """
+    memory_diff = stop_memory.compare_to(start_memory, "filename")
+    delta_memory = 0.0
+
+    # suma de las diferencias en uso de memoria
+    for stat in memory_diff:
+        delta_memory = delta_memory + stat.size_diff
+    
+    # de Byte -> kByte
+    delta_memory = delta_memory/1024.0
+    return delta_memory
+
+def limpieza(lista):
+    """
+    Llama a la función limpieza() del model.
+    """
+    return model.limpieza()
