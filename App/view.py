@@ -120,7 +120,7 @@ while True:
 
     elif int(inputs[0]) == 3:
         resultado = controller.lp_mas_cables(analyzer)
-        i = 1 
+        i = 1 # 0
         tamano = lt.size(resultado[1])
         while i < tamano:
             lp = lt.getElement(resultado[1],i)
