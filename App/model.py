@@ -27,6 +27,7 @@
 
 from math import dist
 from sys import path
+import time
 from DISClib.DataStructures.adjlist import addEdge
 import config as cf
 from DISClib.ADT import list as lt
@@ -40,6 +41,7 @@ import DISClib.Algorithms.Graphs.scc as scc
 import DISClib.Algorithms.Graphs.dfo as dfo
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as mer
 from DISClib.Utils import error as error
 import haversine as hs
 assert cf
@@ -67,6 +69,7 @@ def initialize():
                     'mst': None,
                     'dfs': None,
                     'info_lp': None,
+                    'nombres_lp':None, 
                     'info_cables': None,
                     'nodos_capitales': None,
                     "check":None
@@ -78,6 +81,10 @@ def initialize():
         analyzer['info_cables']= mp.newMap(numelements=6000,
                                      maptype='PROBING',
                                      comparefunction=compareCountry)
+        analyzer['nombres_lp']= mp.newMap(numelements=4000,
+                                     maptype='PROBING',
+                                     comparefunction=compareCountry)
+
         analyzer['info_lp']= mp.newMap(numelements=4000,
                                      maptype='PROBING',
                                      comparefunction=compareCountry)
@@ -127,8 +134,12 @@ def newLP(lp):
 
 def addlp(catalog, info, nodo):
     lp_data= catalog['info_lp']
+    name_info= catalog['nombres_lp']
     elLp=newLP(info)
     mp.put(lp_data, nodo, elLp)
+    nombre=info['name'].lower()
+    mp.put(name_info,nombre,nodo)
+
 
 def samelp(grafo):
     list_vert= gr.vertices(grafo)
@@ -158,8 +169,8 @@ def addVertexescomp(catalog, link):
         exists_origin=gr.containsVertex(grafo,origin)
         exists_destin= gr.containsVertex(grafo, destination)
         addcableInfo(link,catalog)
-        addConnectingLP(origin, destination, catalog)
-        addConnectingLP(destination, origin, catalog)
+        addConnectingLP(origin, destination, catalog, link)
+        addConnectingLP(destination, origin, catalog, link)
         addCabletoLp(destination, catalog)
         addCabletoLp(origin, catalog)
         if exists_origin==False:
@@ -192,10 +203,22 @@ def findLPtoCountry(catalog,origin):
         minidic= me.getValue(entry)
         InfoLp= minidic["lp"]
         pre2=InfoLp['name'].split()
-        pais_lp= pre2[(len(pre2)-1)]
+        pais_lp= pre2[1:(len(pre2)-1)]
+        pais_lp="-".join(pais_lp)
     return pais_lp.lower()
 
-def addConnectingLP(lp1, lp2, catalog):
+def findCountry(catalog,lp):
+    lps= catalog['info_lp']
+    entry=mp.get(lps,lp)
+    if entry!= None:
+        minidic= me.getValue(entry)
+        InfoLp= minidic["lp"]
+        pre2=InfoLp['name'].split()
+        pais_lp= pre2[1:]
+        pais_lp="-".join(pais_lp)
+    return pais_lp.lower()
+
+def addConnectingLP(lp1, lp2, catalog, link):
     landing_points=catalog['info_lp']
     pre= lp1.split("-")
     lpO= pre[0]
@@ -205,7 +228,8 @@ def addConnectingLP(lp1, lp2, catalog):
     if entry!= None:
         minidic= me.getValue(entry)
         InfoLp= minidic["LPsC"]
-        mp.put(InfoLp, lpD, None)
+        distancia=link['cable_length']
+        mp.put(InfoLp, lpD, distancia)
 
 def addCabletoLp(lp,catalog):
     landing_points=catalog['info_lp']
@@ -676,45 +700,40 @@ def distanciasMST(analyzer):
 # pero no creo que valga la pena). Esta lista debería estar en orden de [km] decreciente, pero
 # eso es un detalle para después.
 
-def LpCualPais(analyzer, landing_point1, landing_point2):
-    lpA = compareLpUserLpGraph(analyzer, landing_point1, landing_point2)
-    origin = lpA[0]
-    pais = findLPtoCountry(analyzer, origin)
-    formato = encontrarCapitalDePais(analyzer, pais)
-    return formato
+def findLPfromName(nombre, catalog):
+    mapa_nombres= catalog['nombres_lp']
+    entry= mp.get(mapa_nombres,nombre)
+    id_lp= me.getValue(entry)
+    return id_lp
 
-def paisDFS(analyzer, pais):
-    analyzer['dfs'] = depth.DepthFirstSearch(analyzer['connections'], pais)
-    dfs = depth.dfsVertex(analyzer['dfs'], analyzer['connections'], pais)
-    return dfs
-
-def estaConectado(analyzer, pais):
-    lista_vertices = gr.vertices(analyzer['connections'])
-    dfs = paisDFS(analyzer, pais)
-    paises_afectados = mp.newMap(maptype='CHAINING', loadfactor=0.5)
-    tamaño = lt.size(lista_vertices)
-    i = 1
-    while i < tamaño:
-        vertice = lt.getElement(lista_vertices, i)
-        if vertice != pais:
-            tiene = depth.hasPathTo(analyzer['dfs'], vertice)
-            if tiene == True:
-                if vertice[0] == '1' or vertice[0] == '2' or vertice[0] == '3' or vertice[0] == '4' or vertice[0] == '5' or vertice[0] == '6' or vertice[0] == '7' or vertice[0] == '8' or vertice[0] == '9' or vertice[0] == '0':
-                    paisA = findLPtoCountry(analyzer, vertice)  
-                    mp.put(paises_afectados, paisA, None)
-                else:
-                    cadena = vertice.split('*')
-                    paisA = cadena[1]
-                    mp.put(paises_afectados, paisA, None)
+def findCountriesAffected(catalog, lp_id):
+    mapa_lp = catalog['info_lp']
+    entry=mp.get(mapa_lp, lp_id)
+    minidic=me.getValue(entry)
+    mapa_lps_asoc= minidic['LPsC']
+    lista_lp_asoc=mp.keySet(mapa_lps_asoc)
+    print(lista_lp_asoc)
+    i=1
+    tamano =lt.size(lista_lp_asoc)
+    lista_paises=lt.newList("ARRAY_LIST")
+    while i < tamano+1:
+        elemento= lt.getElement(lista_lp_asoc,i)
+        entry = mp.get(mapa_lp, elemento)
+        print(elemento)
+        if entry != None:
+            dic_list={}
+            entry2=mp.get(mapa_lps_asoc, elemento)
+            distancia=me.getValue(entry2)
+            pais=findCountry(catalog,elemento)
+            dic_list['pais']=pais
+            dic_list['distancia']=distancia
+            lt.addLast(lista_paises, dic_list)
+            print(lista_paises)
+            print(dic_list)
         i += 1
-
-    return paises_afectados
-
-def totalPaisesAfectados(tabla):
-    lista_paises = mp.keySet(tabla)
-    total_paises = lt.size(lista_paises)
-    return (lista_paises, total_paises)
-    
+    cantidad_paises= lt.size(lista_paises)
+    lista_paises=SortbyDist(lista_paises)
+    return lista_paises, cantidad_paises
 
 # ================================================================
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -745,6 +764,10 @@ def comparePaises(pais1, pais2):
         return -1
     else:
         return 0
+def comparedist(pais1,pais2):
+    result = pais1['distancia'] > pais2['distancia']
+    return result   
+    
 
 # ===================
 # Funcion de formato
@@ -760,3 +783,14 @@ def length(string):
     return string
     
 # Funciones de ordenamiento
+
+def SortbyDist(lista):
+    size = lt.size(lista)
+    sub_list = lt.subList(lista, 0, size)
+    sub_list = sub_list.copy()
+    t1 = time.process_time()
+    sorted_list = mer.sort(sub_list, comparedist)
+    t2 = time.process_time()
+    tiempo_ms = (t2-t1)*1000
+    sub_list = None
+    return (tiempo_ms, sorted_list) 
