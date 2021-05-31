@@ -539,7 +539,7 @@ def encontrarCapitalDePais(analyzer, pais):
     formato = capital.lower() + '*' + pais
     return formato
 
-def caminosMenorCosto(analyzer, paisini):
+def caminosMenorCosto(analyzer, pais):
     """
     Calcula los caminos de costo mínimo desde el pais ingresado
     por el usuario a todos los demás vértices del grafo.
@@ -553,12 +553,12 @@ def caminosMenorCosto(analyzer, paisini):
         los caminos de menor costo que devuleve el algortimo de
         Dijkstra.
     """
-    #paisini = encontrarCapitalDePais(analyzer, pais)
+    paisini = encontrarCapitalDePais(analyzer, pais)
     analyzer['paths'] = djk.Dijkstra(analyzer['connections'], paisini)
     print(analyzer['paths'])
     return analyzer
 
-def caminoMenorCosto(analyzer, paisfini):
+def caminoMenorCosto(analyzer, pais):
     """
     Calcula el camino de costo mínimo entre el pais origen
     (que se ingresa como parámetro en la función 'caminosMínimoCosto()')
@@ -573,18 +573,15 @@ def caminoMenorCosto(analyzer, paisfini):
         el camino de costo mínimo entre el pais de origen
         y el pais destino.
     """
-    #paisfini = encontrarCapitalDePais(analyzer, pais)
+    paisfini = encontrarCapitalDePais(analyzer, pais)
     camino = djk.pathTo(analyzer['paths'], paisfini)
-    #print(analyzer['connections'])
     return camino
 
 def caminoMenorCostoLp(analyzer, landingA, landingB):
-    landingpoints = compareLpUserLpGraph(analyzer, landingA, landingB)
-    lpA = landingpoints[0]
-    lpB = landingpoints[1]
+    lpA = compareLpUserLpGraph(analyzer, landingA)
+    lpB = compareLpUserLpGraph(analyzer, landingB)
 
     analyzer['paths'] = djk.Dijkstra(analyzer['connections'], lpA)
-    #print(analyzer['paths'])
     camino = djk.pathTo(analyzer['paths'], lpB)
     return camino
 

@@ -119,58 +119,46 @@ while True:
         print_Req1(landing_point1, landing_point2, estan)
 
     elif int(inputs[0]) == 3:
-        resultado=controller.lp_mas_cables(analyzer)
-        i=0 
-        tamano= lt.size(resultado[1])
+        resultado = controller.lp_mas_cables(analyzer)
+        i = 0 
+        tamano = lt.size(resultado[1])
         while i < tamano:
-            lp=lt.getElement(resultado[1],i)
-            info_del_lp= controller.infoLPmasCables(lp,analyzer)
+            lp = lt.getElement(resultado[1],i)
+            info_del_lp = controller.infoLPmasCables(lp,analyzer)
             printResultsReq2(info_del_lp, resultado[0])
-            i+=1
+            i += 1
 
     elif int(inputs[0]) == 4:
-        pais_ini = 'uruguay' #input('Ingrese el pais de origen: ')
+        pais_ini = 'algeria' #input('Ingrese el pais de origen: ')
         formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
-        controller.caminosMenorCosto(analyzer, formato)
+        controller.caminosMenorCosto(analyzer, pais_ini)
         print(formato)
 
     elif int(inputs[0]) == 5:
-        landingA = '5950'
-        landingB = '5825'
+        landingA = 'Port Sudan'
+        landingB = 'Suez'
         pais_fini = 'argentina' #input('Ingrese el pais destino: ')
-        #formato = controller.encontrarCapitalDePais(analyzer, pais_fini)
-        camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB)
-        #camino = controller.caminoMenorCosto(analyzer, formato)
-        #print(formato)
+        #camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB) # Con landing
+                                                                              # Points.
+        camino = controller.caminoMenorCosto(analyzer, pais_fini) # Con Paises.
         print_Req3(camino)
 
     elif int(inputs[0]) == 6:
-<<<<<<< HEAD
         #mst  = controller.arbolExpansionMinima(analyzer)
         distancias = controller.distanciasMST(analyzer)
         #total = controller.totalVerticesMST(analyzer)
         #costo = controller.costoTotalArcosMST(analyzer)
         print(distancias)
-=======
-        nombrelp=input("Ingrese el nombre del landing point: ")
-        nombrelp=nombrelp.lower()
-        id_lp=controller.findLPfromName(nombrelp, analyzer)
-        print(id_lp)
-        resultado= controller.findCountriesAffected(analyzer,id_lp)
-        print(resultado[0])
-        printReq5(resultado, nombrelp)
         
->>>>>>> c12e548469c5390f131ff30fc06c3de4e053a71b
 
     elif int(inputs[0]) == 7:
-        landing_point1 = '5950'
-        landing_point2 = '5825'
-        formato = controller.LpCualPais(analyzer, landing_point1, landing_point2)
-        controller.paisDFS(analyzer, formato)
-        tabla = controller.estaConectado(analyzer, formato)
-        total = controller.totalPaisesAfectados(tabla)
-        print(total[0])
-        print(total[1])
+        nombrelp = input("Ingrese el nombre del landing point: ")
+        nombrelp = nombrelp.lower()
+        id_lp = controller.findLPfromName(nombrelp, analyzer)
+        print(id_lp)
+        resultado = controller.findCountriesAffected(analyzer,id_lp)
+        print(resultado[0])
+        printReq5(resultado, nombrelp)
 
     else:
         sys.exit(0)
