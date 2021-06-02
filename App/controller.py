@@ -226,7 +226,6 @@ def lp_mas_cables(analyzer):
     return model.lp_mas_cables(analyzer)
 
 def infoLPmasCables(lp, analyzer):
-    lp = None
     delta_time = -1.0
     delta_memory = -1.0
 

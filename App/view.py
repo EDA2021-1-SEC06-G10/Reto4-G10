@@ -126,11 +126,13 @@ while True:
 
     elif int(inputs[0]) == 3:
         resultado = controller.lp_mas_cables(analyzer)
-        i = 1 # 0
+        print(resultado)
+        i = 0 # 0
         tamano = lt.size(resultado[1])
         while i < tamano:
-            lp = lt.getElement(resultado[1],i)
-            info_del_lp = controller.infoLPmasCables(lp,analyzer)
+            landp = lt.getElement(resultado[1],i)
+            print(type(landp))
+            info_del_lp = controller.infoLPmasCables(landp, analyzer)
             printResultsReq2(info_del_lp, resultado[0])
             i += 1
 
@@ -159,9 +161,7 @@ while True:
         nombrelp = input("Ingrese el nombre del landing point: ")
         nombrelp = nombrelp.lower()
         id_lp = controller.findLPfromName(nombrelp, analyzer)
-        print(id_lp)
         resultado = controller.findCountriesAffected(analyzer,id_lp)
-        print(resultado[0])
         printReq5(resultado, nombrelp)
 
     else:

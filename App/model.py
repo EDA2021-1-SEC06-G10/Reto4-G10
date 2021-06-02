@@ -203,9 +203,9 @@ def findLPtoCountry(catalog,origin):
     if entry!= None:
         minidic= me.getValue(entry)
         InfoLp= minidic["lp"]
-        pre2=InfoLp['name'].split()
-        pais_lp= pre2[1:(len(pre2)-1)]
-        pais_lp="-".join(pais_lp)
+        pre2=InfoLp['name'].split(", ")
+        pais_lp= pre2[(len(pre2)-1)]
+
     return pais_lp.lower()
 
 def findCountry(catalog,lp):
@@ -214,9 +214,8 @@ def findCountry(catalog,lp):
     if entry!= None:
         minidic= me.getValue(entry)
         InfoLp= minidic["lp"]
-        pre2=InfoLp['name'].split()
-        pais_lp= pre2[1:]
-        pais_lp="-".join(pais_lp)
+        pre2=InfoLp['name'].split(", ")
+        pais_lp= pre2[1]
     return pais_lp.lower()
 
 def addConnectingLP(lp1, lp2, catalog, link):
@@ -500,6 +499,8 @@ def verificacion(mas_cables, analyzer, mayor):
 
 def infoLPmasCables(lp, analyzer):
     mapa_lp = analyzer['info_lp']
+    print('model')
+    print(lp)
     entry = mp.get(mapa_lp,lp)
     minidic = me.getValue(entry)
     info_lp = minidic['lp']
@@ -742,14 +743,12 @@ def findCountriesAffected(catalog, lp_id):
     minidic=me.getValue(entry)
     mapa_lps_asoc= minidic['LPsC']
     lista_lp_asoc=mp.keySet(mapa_lps_asoc)
-    #print(lista_lp_asoc)
     i=1
     tamano =lt.size(lista_lp_asoc)
     lista_paises=lt.newList("ARRAY_LIST")
     while i < tamano+1:
         elemento= lt.getElement(lista_lp_asoc,i)
         entry = mp.get(mapa_lp, elemento)
-        #print(elemento)
         if entry != None:
             dic_list={}
             entry2=mp.get(mapa_lps_asoc, elemento)
@@ -758,8 +757,6 @@ def findCountriesAffected(catalog, lp_id):
             dic_list['pais']=pais
             dic_list['distancia']=distancia
             lt.addLast(lista_paises, dic_list)
-            print(lista_paises)
-            print(dic_list)
         i += 1
 
     cantidad_paises= lt.size(lista_paises)
