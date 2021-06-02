@@ -141,12 +141,12 @@ while True:
         #print(formato)
 
     elif int(inputs[0]) == 5:
-        #landingA = 'Port Sudan'
-        #landingB = 'Suez'
-        pais_fini = input('Ingrese el pais destino: ')
-        #camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB) # Con landing
+        landingA = 'Port Sudan'
+        landingB = 'Suez'
+        #pais_fini = input('Ingrese el pais destino: ')
+        camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB) # Con landing
                                                                               # Points.
-        camino = controller.caminoMenorCosto(analyzer, pais_fini) # Con Paises.
+        #camino = controller.caminoMenorCosto(analyzer, pais_fini) # Con Paises.
         print_Req3(camino)
 
     elif int(inputs[0]) == 6:
