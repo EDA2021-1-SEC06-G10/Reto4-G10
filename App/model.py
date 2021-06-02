@@ -25,6 +25,7 @@
  """
 
 
+from DISClib.ADT.indexminpq import size
 from math import dist
 from sys import path
 import time
@@ -651,8 +652,39 @@ def costoTotalArcosMST(analyzer):
     return total
 
 def distanciasMST(analyzer):
+    mst = arbolExpansionMinima(analyzer)
+    print(mst)
+    distanciasMap = mst['distTo']
+    lista_llaves = mp.keySet(distanciasMap)
+    size_lista_llaves = lt.size(lista_llaves)
+    mayor = 0
+    menor = 100000000000000000000000000
+    conexion_mayor = {}
+    conexion_menor = {}
+    i = 1
+    while i < size_lista_llaves:
+        elemento = lt.getElement(lista_llaves, i)
+        pareja = mp.get(distanciasMap, elemento)
+        vertice = me.getKey(pareja)
+        distancia = me.getValue(pareja)
+
+        if distancia > mayor:
+            mayor = distancia
+            conexion_mayor['conexion'] = vertice
+            conexion_mayor['distancia'] = mayor
+        if distancia < menor:
+            menor = distancia
+            conexion_menor['conexion'] = vertice
+            conexion_menor['distancia'] = menor
+
+        i += 1
+
+    return (conexion_mayor, conexion_menor, size_lista_llaves)
+
+def listaDistanciasMST(analyzer):
     grafo = analyzer['connections']
     mst = arbolExpansionMinima(analyzer)
+    #print(mst)
     vertices = gr.vertices(grafo)
     tamaño = lt.size(vertices)
 

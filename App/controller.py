@@ -230,7 +230,32 @@ def infoLPmasCables(lp, analyzer):
     return (lp)
 
 def distanciasMST(analyzer):
-    return model.distanciasMST(analyzer)
+    distancias = None
+    delta_time = -1.0
+    delta_memory = -1.0
+
+    # inicializa el processo para medir memoria
+    tracemalloc.start()
+
+    # toma de tiempo y memoria al inicio del proceso
+    start_time = getTime()
+    start_memory = getMemory()
+   
+    distancias = model.distanciasMST(analyzer)
+    
+    # toma de tiempo y memoria al final del proceso
+    stop_memory = getMemory()
+    stop_time = getTime()
+
+    # finaliza el procesos para medir memoria
+    tracemalloc.stop()
+
+    # calculando la diferencia de tiempo y memoria
+    delta_time = stop_time - start_time
+    delta_memory = deltaMemory(start_memory, stop_memory)
+
+    print('Tiempo [ms]: ' + str(delta_time) + ' || ' + 'Memoria [kB]: ' + str(delta_memory))
+    return distancias
 
 def totalVerticesMST(analyzer):
     return model.totalVerticesMST(analyzer)
