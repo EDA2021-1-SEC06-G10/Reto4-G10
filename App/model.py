@@ -385,10 +385,11 @@ def compareLpUserLpGraph(analyzer, landing_point1):
     Retorna:
         un string, que es el vértice correspondiente a landing_point1..
     """
-    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
-    mapa = analyzer['components']['idscc']
+    # analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    # mapa = analyzer['components']['idscc']
 
-    lista_llaves = mp.keySet(mapa)
+    mapa = analyzer['connections']
+    lista_llaves = gr.vertices(mapa)
     size = lt.size(lista_llaves)
 
     informacion = analyzer['info_lp']
@@ -416,12 +417,14 @@ def compareLpUserLpGraph(analyzer, landing_point1):
     centinelaB = False
     while j < size or centinelaB == False:
         cada_elemento = lt.getElement(lista_llaves, j)
-        lp = cada_elemento.split('-')[0]
-        if lp == lpnumber:
-            centinelaB = True
-            lpA = cada_elemento
+        if cada_elemento[0] == '1' or cada_elemento[0] == '2' or cada_elemento[0] == '3' or cada_elemento[0] == '4' or cada_elemento[0] == '5' or cada_elemento[0] == '6' or cada_elemento[0] == '7' or cada_elemento[0] == '8' or cada_elemento[0] == '9' or cada_elemento[0] == '0':
+            lp = cada_elemento.split('-')[0]
+            if lp == lpnumber:
+                centinelaB = True
+                lpA = cada_elemento
         j += 1
      
+    print(lpA)
     return lpA
         
 def estanLosDosLandingPoints(analyzer, landing_point1, landing_point2):
@@ -653,7 +656,7 @@ def costoTotalArcosMST(analyzer):
 
 def distanciasMST(analyzer):
     mst = arbolExpansionMinima(analyzer)
-    print(mst)
+    #print(mst)
     distanciasMap = mst['distTo']
     lista_llaves = mp.keySet(distanciasMap)
     size_lista_llaves = lt.size(lista_llaves)
