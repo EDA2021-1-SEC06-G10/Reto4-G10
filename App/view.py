@@ -63,39 +63,39 @@ def print_Req1(landing_point1, landing_point2, booleano):
 
 def printResultsReq2(info_lp, cantidad_cables):
     print('*' * 25)
-    print('El landing point: '+ info_lp[0] + " con numero de identificacion: " +info_lp[2]+ " se encuentra en" +info_lp[1])
+    print('El landing point: ' + info_lp[0] + " con numero de identificacion: " + info_lp[2] + " se encuentra en" +info_lp[1])
     print("Este tiene un total de " + str(cantidad_cables)+ " cables conectados a el")
 
 def print_Req3(camino):
     if camino is not None:
         distCamino = stk.size(camino)
-        print('El camino es de longitud: ' + str(distCamino) + '.')
+        longitud = 0
         while (not stk.isEmpty(camino)):
             cada_vertice = stk.pop(camino)
+            longitud += cada_vertice['weight']
             print(cada_vertice)
+        print('El camino es de longitud [km]: ' + str(longitud) + '.')
     else:
         print('No hay camino.')
 
-def print_Req4(conexiones, total):
-    print('El número de vértices en esta red de expansión es de: ' + str(conexiones[2]) + '.')
+def print_Req4(conexiones, vertices, total):
+    print('El número de vértices en esta red de expansión es de: ' + str(vertices) + '.')
     print('El total de peso del árbol en cuestión es: ' + str(total) + '.')
     print('El camino de más kilómetros es ' + str(conexiones[0]['distancia']) + ' el cuál termina en ' + str(conexiones[0]['conexion']) + '.')
     print('El camino de menos kilómetros es ' + str(conexiones[1]['distancia']) + ' el cuál termina en ' + str(conexiones[1]['conexion']) + '.')
 
 def printReq5(resultado, lp_name):
     print('*' * 25)
-    print('Si falla el landing point: '+ lp_name + " habría  " +str(resultado[1])+ " paises afectados")
+    print('Si falla el Landing Point: '+ lp_name + " habría  " + str(resultado[1]) + " paises afectados.")
     print('\nEstos paises son: ')
-    i=0
-    tamano=lt.size(resultado[0][1])
+    i = 0
+    tamano = lt.size(resultado[0][1])
     while i < tamano:
-        dic= lt.getElement(resultado[0][1], i)
-        pais=dic['pais']
-        distancia=dic['distancia']
-        print(pais+ " se encontraría afectado y tiene un lp a " +str(distancia)+ " km")
-        i+=1
-
-    
+        dic = lt.getElement(resultado[0][1], i)
+        pais = dic['pais']
+        distancia = dic['distancia']
+        print(pais + " se encontraría afectado y tiene un Landing Point a " + str(distancia) + " kilómetros.")
+        i += 1
 
 catalog = None
 
@@ -107,7 +107,7 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        analyzer=controller.initialize()
+        analyzer = controller.initialize()
         controller.loadData(analyzer)
         vertices= gr.numVertices(analyzer['connections'])
         aristas= gr.numEdges(analyzer['connections'])
@@ -117,10 +117,8 @@ while True:
         print("el primer Landing point cargdo es el 3316 /" +" Nombre: "+ info_primlp[0]+" /" +" Latitud: "+ str(info_primlp[3])+ "Lomgitud: " + info_primlp[4])
 
     elif int(inputs[0]) == 2:
-        # 5950 (Port Sudan) y 3210 (Marseille) están en el mismo clúster.
-        # 5950 y 5774 no están en el mismo clúster.
-        landing_point1 = 'Port Sudan' #input('Ingrese el landing point A: ')
-        landing_point2 = 'Marseille' #input('Ingrese el landing point B: ')
+        landing_point1 = input('Ingrese el landing point A: ')
+        landing_point2 = input('Ingrese el landing point B: ')
         componentes = controller.componentesConectados(analyzer)
         estan = controller.estanLosDosLandingPoints(analyzer, landing_point1, landing_point2)
         print('*' * 25)
@@ -130,7 +128,7 @@ while True:
     elif int(inputs[0]) == 3:
         resultado = controller.lp_mas_cables(analyzer)
         print(resultado)
-        i = 0 # 0
+        i = 0
         tamano = lt.size(resultado[1])
         while i < tamano:
             landp = lt.getElement(resultado[1],i)
@@ -143,22 +141,22 @@ while True:
         pais_ini = input('Ingrese el pais de origen: ')
         formato = controller.encontrarCapitalDePais(analyzer, pais_ini)
         controller.caminosMenorCosto(analyzer, pais_ini)
-        #print(formato)
 
     elif int(inputs[0]) == 5:
-        landingA = 'Port Sudan'
-        landingB = 'Suez'
-        #pais_fini = input('Ingrese el pais destino: ')
-        camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB) # Con landing
+        #landingA = 'Port Sudan'
+        #landingB = 'Suez'
+        pais_fini = input('Ingrese el pais destino: ')
+        #camino = controller.caminoMenorCostoLp(analyzer, landingA, landingB) # Con landing
                                                                               # Points.
-        #camino = controller.caminoMenorCosto(analyzer, pais_fini) # Con Paises.
+        camino = controller.caminoMenorCosto(analyzer, pais_fini) # Con Paises.
         print_Req3(camino)
 
     elif int(inputs[0]) == 6:
         controller.arbolExpansionMinima(analyzer)
         conexiones = controller.distanciasMST(analyzer)
+        vertices = controller.totalVerticesMST(analyzer)
         total = controller.costoTotalArcosMST(analyzer)
-        print_Req4(conexiones, total)
+        print_Req4(conexiones, vertices, total)
         
     elif int(inputs[0]) == 7:
         nombrelp = input("Ingrese el nombre del landing point: ")
