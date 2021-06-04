@@ -61,7 +61,7 @@ def loadCountries(catalog):
         model.addCountry(catalog, country)
 
 def loadVertexescomp(catalog):
-    contentfile = cf.data_dir + 'connections50.csv'
+    contentfile = cf.data_dir + 'connections.csv'
     input_file = csv.DictReader(open(contentfile, encoding='utf-8'))
     for cable in input_file:
         cable['origin']=cable['\ufefforigin']

@@ -113,8 +113,7 @@ while True:
         aristas= gr.numEdges(analyzer['connections'])
         print("El numero de vertices cargados es: " + str(vertices))
         print("El numero de arcos en el grafo es: " + str(aristas))
-        info_primlp= controller.infoLPmasCables(analyzer, '3316')
-        print("el primer Landing point cargdo es el 3316 /" +" Nombre: "+ info_primlp[0]+" /" +" Latitud: "+ str(info_primlp[3])+ "Lomgitud: " + info_primlp[4])
+        
 
     elif int(inputs[0]) == 2:
         landing_point1 = input('Ingrese el landing point A: ')
