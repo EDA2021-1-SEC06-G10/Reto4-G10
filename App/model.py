@@ -657,7 +657,7 @@ def distanciasMST(analyzer):
     tamaño = lt.size(lista)
 
     mayor = 0
-    menor = 1000000000000000000000000000000000
+    menor = 100000000000000000000000000000000
 
     dic_mayor = {}
     dic_menor = {}
