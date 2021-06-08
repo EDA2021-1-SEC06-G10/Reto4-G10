@@ -666,16 +666,17 @@ def distanciasMST(analyzer):
     while i < tamaño:
         vertice = lt.getElement(lista, i)
         grafo_arbol = prim.prim(grafo, mst, vertice)
-        vertices_prim = gr.vertices(grafo_arbol)
-        tamaño_vertices = lt.size(vertices_prim)
 
         j = 1
-        while j < tamaño_vertices:
-            cada_vertice = lt.getElement(vertices_prim, j)
+        while j < tamaño:
+            cada_vertice = lt.getElement(lista, j)
 
             if cada_vertice != vertice:
-                distancia = prim.scan(grafo, mst, cada_vertice)
-
+                distancia_dic = prim.scan(grafo, grafo_arbol, cada_vertice)
+                distancia_hash = distancia_dic['distTo']
+                pareja = mp.get(distancia_hash, cada_vertice)
+                distancia = me.getValue(pareja)
+                
                 if distancia > mayor:
                     mayor = distancia
                     dic_mayor['conexion'] = (vertice, cada_vertice)

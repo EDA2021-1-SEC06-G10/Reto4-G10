@@ -81,8 +81,8 @@ def print_Req3(camino):
 def print_Req4(conexiones, vertices, total):
     print('El número de vértices en esta red de expansión es de: ' + str(vertices) + '.')
     print('El total de peso del árbol en cuestión es: ' + str(total) + '.')
-    print('El camino de más kilómetros es ' + str(conexiones[0]['distancia']) + ' el cuál termina en ' + str(conexiones[0]['conexion']) + '.')
-    print('El camino de menos kilómetros es ' + str(conexiones[1]['distancia']) + ' el cuál termina en ' + str(conexiones[1]['conexion']) + '.')
+    print('El camino de más kilómetros es ' + str(conexiones[0]['distancia']) + ' el cuál conecta a: ' + str(conexiones[0]['conexion']) + '.')
+    print('El camino de menos kilómetros es ' + str(conexiones[1]['distancia']) + ' el cuál conecta a: ' + str(conexiones[1]['conexion']) + '.')
 
 def printReq5(resultado, lp_name):
     print('*' * 25)
