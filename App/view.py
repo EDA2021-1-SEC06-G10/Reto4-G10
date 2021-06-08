@@ -109,8 +109,11 @@ while True:
         print("Cargando información de los archivos ....")
         analyzer = controller.initialize()
         controller.loadData(analyzer)
-        vertices = gr.numVertices(analyzer['connections'])
-        aristas = gr.numEdges(analyzer['connections'])
+        vertices= gr.numVertices(analyzer['connections'])
+        aristas= gr.numEdges(analyzer['connections'])
+        print("El numero de vertices cargados es: " + str(vertices))
+        print("El numero de arcos en el grafo es: " + str(aristas))
+        
 
     elif int(inputs[0]) == 2:
         landing_point1 = input('Ingrese el landing point A: ')

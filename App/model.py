@@ -492,9 +492,11 @@ def infoLPmasCables(lp, analyzer):
     info_lp = minidic['lp']
     identificador = lp
     nombre = info_lp['name']
+    latitud= info_lp['latitude']
+    longitud= info_lp['longitude']
     pre = nombre.split(",")
     pais = pre[(len(pre) - 1)]
-    return (nombre,pais,identificador)
+    return (nombre,pais,identificador, latitud, longitud)
 
 # ================
 # Requerimiento 3
